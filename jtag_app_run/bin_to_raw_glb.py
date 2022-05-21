@@ -3,7 +3,9 @@ import numpy as np
 
 def bin_to_raw(output_file):
     design_place = 'design.place'
-    bin_folder = 'app/'
+    new_dir = output_file.replace("hw_output_","")
+    new_dir = new_dir.replace(".raw","")
+    bin_folder = 'app/output_bin/'  + new_dir + "/"
 
     shift = 2
 

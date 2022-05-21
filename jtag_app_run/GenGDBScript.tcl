@@ -23,7 +23,7 @@ set fp              [open $GDB_CMD_FILE w]
 
 puts $fp "target remote localhost:2331"
 puts $fp "set mem inaccessible-by-default off"
-puts $fp "monitor speed auto"
+puts $fp "monitor speed 10000"
 puts $fp "monitor clrbp"
 puts $fp "monitor reset"
 puts $fp "monitor halt"

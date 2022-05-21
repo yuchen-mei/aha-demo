@@ -1,4 +1,5 @@
 import sys
+import os
 
 def raw_to_bin(input_file):
     design_place = 'design.place'
@@ -41,7 +42,18 @@ def raw_to_bin(input_file):
             input_data_int.append(int(input_data1[j], 16))
             input_data_int.append(int(input_data0[j], 16))
         # make file
-        bin_file_name = "app/image_" + str(input_place[i] + shift) + ".bin"
+        current_dir = os.getcwd()
+        new_dir = input_image.replace("gold/hw_input_stencil_","")
+        new_dir = new_dir.replace(".raw","")
+        new_dir_input = "app/input_bin/" + new_dir 
+        new_dir_output = "app/output_bin/" + new_dir 
+        input_path = os.path.join(current_dir, new_dir_input)
+        output_path = os.path.join(current_dir, new_dir_output)
+        if not os.path.isdir(input_path):
+            os.mkdir(input_path)
+        if not os.path.isdir(output_path):
+            os.mkdir(output_path)
+        bin_file_name = input_path + "/image_" + str(input_place[i] + shift) + ".bin"
         bin_file = open(bin_file_name, "wb")
         # write to file
         bin_file.write(bytes(input_data_int))

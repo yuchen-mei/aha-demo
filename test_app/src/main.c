@@ -68,13 +68,13 @@ main(int argc, char * argv[]) {
   //            (1 << AHASOC_PCTRL_CGRA_Pos);
   //status = HAL_PtfmCtrl_SelectClock(&PtfmCtl, dma_mask, 0x0);
   //status = HAL_PtfmCtrl_SelectClock(&PtfmCtl, cgra_mask, 0x2); // 2 ^ power divide
-  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, cgra_mask, 3); // 2^1 = 2 60/2 = 30
-  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, sys_mask, 4); // 2^2 = 4 60/4 = 15
+  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, cgra_mask, 0); // 2^1 = 2 60/2 = 30
+  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, sys_mask, 0); // 2^2 = 4 60/4 = 15
   status = HAL_PtfmCtrl_DisableCG( & PtfmCtl, cgra_mask);
   status = HAL_PtfmCtrl_ClearReset( & PtfmCtl, cgra_mask);
 
   // Send a greeting to the trace device
-  trace_printf("Hello, I am Amber!\r\n");
+  //trace_printf("Hello, I am Amber!\r\n");
 
   // App Test
   cgra_int_occured = 0;
@@ -100,7 +100,7 @@ u32 test_app(void) {
   //uint16_t app_data[NUM_APP_DATA];
   uint16_t gold_data[NUM_READ_DATA];
   //for (i = 0; i < NUM_APP_DATA; i++) app_data[i] = (uint16_t) app_input_data[i];
-  for (i = 0; i < NUM_READ_DATA; i++) gold_data[i] = (uint16_t) app_gold_data[i];
+  //for (i = 0; i < NUM_READ_DATA; i++) gold_data[i] = (uint16_t) app_gold_data[i];
 
   int deploy_tile = 2;
 
@@ -108,17 +108,17 @@ u32 test_app(void) {
   const u32 read_start_addr = 0x20000 + 0x40000 * deploy_tile;
 
 
-  trace_printf("addr0: %lx\n", (u32) (bitstream[0] >> 32));
-  trace_printf("data0: %lx\n", (u32) (bitstream[0] & 0xffffffff));
+  //trace_printf("addr0: %lx\n", (u32) (bitstream[0] >> 32));
+  //trace_printf("data0: %lx\n", (u32) (bitstream[0] & 0xffffffff));
 
-  trace_printf("addre: %lx\n", (u32) (bitstream[app_size-1] >> 32));
-  trace_printf("datae: %lx\n", (u32) (bitstream[app_size-1] & 0xffffffff));
+  //trace_printf("addre: %lx\n", (u32) (bitstream[app_size-1] >> 32));
+  //trace_printf("datae: %lx\n", (u32) (bitstream[app_size-1] & 0xffffffff));
 
   HAL_Cgra_Glc_WriteReg(GLC_STALL, 0xFFFF);
   write_cgra_configuration_streaming(bitstream,
     app_size);
 
-  trace_printf("bitstream size: %d \r\n", app_size);
+  //trace_printf("bitstream size: %d \r\n", app_size);
   //    for (int i = 0; i < app_size; i++) {
   //       u32 addr = app_addrs_script[i];
   //       u32 addr_shifted = (addr & 0xFFFF00FF) | ((((addr >> 8) & 0xFF) + 2*deploy_tile) << 8);
@@ -127,40 +127,26 @@ u32 test_app(void) {
   //    }
 
   int error = 0;
-  trace_printf("do compare\r\n");
-  for (int i = 0; i < app_size; i++) {
+  //trace_printf("do compare\r\n");
+/*  for (int i = 0; i < app_size; i++) {
     u64 addr = bitstream[i];
     u32 addr_shifted = addr >> 32;
     if (HAL_Cgra_Tile_ReadReg(addr_shifted) != (bitstream[i] & 0xffffffff)) {
-//      trace_printf("index: %d \r\n", i);
-//      trace_printf("addr: %lx \r\n", addr_shifted);
-//      trace_printf("recieved value: %lx \r\n", (u32) HAL_Cgra_Tile_ReadReg(addr_shifted));
-//      trace_printf("correct value: %lx \r\n", (u32)(bitstream[i] & 0xffffffff));
+//      //trace_printf("index: %d \r\n", i);
+//      //trace_printf("addr: %lx \r\n", addr_shifted);
+//      //trace_printf("recieved value: %lx \r\n", (u32) HAL_Cgra_Tile_ReadReg(addr_shifted));
+//      //trace_printf("correct value: %lx \r\n", (u32)(bitstream[i] & 0xffffffff));
       error++;
     }
-  }
+  }*/
 
   if (error != 0) {
-    trace_printf("Failed streaming config, errors: %d\r\n", error);
+    //trace_printf("Failed streaming config, errors: %d\r\n", error);
     //return 0;
   }
   cgra_int_occured = 0;
 
-  ////trace_printf("\n** Write extent to GLB memory tile 0 **\n");
-
-
-  u16 * pixel_check0 = AHASOC_CGRA_DATA_BASE + start_addr;
-  u16 * pixel_check1 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*1;
-  u16 * pixel_check2 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*2;
-  u16 * pixel_check3 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*3;
-  u16 * pixel_check4 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*4;
-  u16 * pixel_check5 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*5;
-  u16 * pixel_check6 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*6;
-  u16 * pixel_check7 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*7;
-  u16 * pixel_check8 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*8;
-
-
-
+  //////trace_printf("\n** Write extent to GLB memory tile 0 **\n");
 
 
 
@@ -234,13 +220,13 @@ u32 test_app(void) {
 
   HAL_Cgra_Glc_WriteReg(GLC_STREAM_START_PULSE, stream_pulse_val); // pulsed reg.
 
-  ////trace_printf("\n** Wait for interrupt  **\n");
+  //////trace_printf("\n** Wait for interrupt  **\n");
   // Wait for GLB interrupt signaling writes are done.
-  //trace_printf("Errors in setup: %d\r\n", error);
+  ////trace_printf("Errors in setup: %d\r\n", error);
   wait_for_interrupt();
 
-  //trace_printf("Finished interrupt\r\n", error);
-  trace_printf("\n** Check with Gold  **\n");
+  ////trace_printf("Finished interrupt\r\n", error);
+  //trace_printf("\n** Check with Gold  **\n");
   // Check app output data.
   int err = 0;
 
@@ -253,15 +239,15 @@ u32 test_app(void) {
 	  for (i = 0; i < NUM_READ_DATA/banks; i++) {
 		if ((u16)(read_base[i] & 0xff) != (u16) gold_data[i*banks+b]) {
 		  err++;
-		  trace_printf("index %d\n", i);
-		  trace_printf("output_data %lx\n", read_base[i] & 0xff);
-		  trace_printf("gold_data %lx\n", gold_data[i*banks+b]);
+		  //trace_printf("index %d\n", i);
+		  //trace_printf("output_data %lx\n", read_base[i] & 0xff);
+		  //trace_printf("gold_data %lx\n", gold_data[i*banks+b]);
 		}
 		//read_base[i] = 0;
 	  }
   }*/
 
-  trace_printf("Application finished errors: %d\n", err);
+  //trace_printf("Application finished errors: %d\n", err);
   return err;
 }
 
@@ -311,11 +297,11 @@ void write_cgra_configuration_streaming(u64 * addrs, //u32 *datas,
 
   const u32 TILE_CTRL_VALUE = (1 << 10);
   HAL_Cgra_Glb_WriteReg(0x200 + 0x00, TILE_CTRL_VALUE);
-  trace_printf("tile ctrl: %lx\r\n", HAL_Cgra_Glb_ReadReg(0x200 + 0x00));
+  //trace_printf("tile ctrl: %lx\r\n", HAL_Cgra_Glb_ReadReg(0x200 + 0x00));
   HAL_Cgra_Glb_WriteReg(0x200 + 0xa8, 0x00000 + 0x40000 * 2 + 0x20000);
-  trace_printf("start addr: %lx\r\n", HAL_Cgra_Glb_ReadReg(0x200 + 0xa8));
+  //trace_printf("start addr: %lx\r\n", HAL_Cgra_Glb_ReadReg(0x200 + 0xa8));
   HAL_Cgra_Glb_WriteReg(0x200 + 0xac, size * 2);
-  trace_printf("size : %d\r\n", HAL_Cgra_Glb_ReadReg(0x200 + 0xac));
+  //trace_printf("size : %d\r\n", HAL_Cgra_Glb_ReadReg(0x200 + 0xac));
 
   cgra_int_code = 0x30;
 
@@ -349,50 +335,50 @@ void write_glb_setup(u32 tile, int input, int output, int num_active_words, int 
   }
 
   HAL_Cgra_Glb_WriteReg(GLB_TILE0_TILE_CTRL + tile * 0x100, TILE_CTRL_VALUE);
-  trace_printf("tile ctrl: %lx\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_TILE_CTRL + tile * 0x100));
+  //trace_printf("tile ctrl: %lx\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_TILE_CTRL + tile * 0x100));
 
   if (input) {
-    //trace_printf ("\n** Setup Load side (glb reg writes) Tile %d **\n", tile);
+    ////trace_printf ("\n** Setup Load side (glb reg writes) Tile %d **\n", tile);
     HAL_Cgra_Glb_WriteReg(GLB_TILE0_LD_DMA_HEADER_0_START_ADDR + tile * 0x100, tile << 18);
-    trace_printf("input_address: %lx\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_START_ADDR + tile * 0x100));
+    //trace_printf("input_address: %lx\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_START_ADDR + tile * 0x100));
     HAL_Cgra_Glb_WriteReg(GLB_TILE0_LD_DMA_HEADER_0_ACTIVE_CTRL + tile * 0x100,
       //  num_active_words=1, num_inactive_words=0
       (num_active_words | (num_inactive_words << 16)));
-    trace_printf("num active words: %d\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_ACTIVE_CTRL + tile * 0x100));
+    //trace_printf("num active words: %d\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_ACTIVE_CTRL + tile * 0x100));
 
     HAL_Cgra_Glb_WriteReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_0 + tile * 0x100, (((u32) extent0) << 10) | stride0);
     if(HAL_Cgra_Glb_ReadReg((GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_0 + tile * 0x100) >> 10) < extent0){
     	HAL_Cgra_Glb_WriteReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_0 + tile * 0x100, (((u32) extent0) << 10) | stride0);
     }
-    trace_printf("extent0: %d\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_0 + tile * 0x100) >> 10);
-    trace_printf("stride0: %d\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_0 + tile * 0x100) & 0x3ff);
+    //trace_printf("extent0: %d\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_0 + tile * 0x100) >> 10);
+    //trace_printf("stride0: %d\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_0 + tile * 0x100) & 0x3ff);
 
 
     HAL_Cgra_Glb_WriteReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_1 + tile * 0x100, (((u32) extent1) << 10) | stride1);
-    trace_printf("extent1: %lx\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_1 + tile * 0x100) >> 10);
-    trace_printf("stride1: %d\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_1 + tile * 0x100) & 0x3ff);
+    //trace_printf("extent1: %lx\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_1 + tile * 0x100) >> 10);
+    //trace_printf("stride1: %d\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_1 + tile * 0x100) & 0x3ff);
 
     HAL_Cgra_Glb_WriteReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_2 + tile * 0x100, (((u32) extent2) << 10) | stride2);
-    trace_printf("extent2: %lx\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_2 + tile * 0x100) >> 10);
-    trace_printf("stride2: %d\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_2 + tile * 0x100) & 0x3ff);
+    //trace_printf("extent2: %lx\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_2 + tile * 0x100) >> 10);
+    //trace_printf("stride2: %d\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_2 + tile * 0x100) & 0x3ff);
 
     HAL_Cgra_Glb_WriteReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_3 + tile * 0x100, (((u32) extent3) << 10) | stride3);
-    trace_printf("extent3: %lx\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_3 + tile * 0x100) >> 10);
-    trace_printf("stride3: %d\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_3 + tile * 0x100) & 0x3ff);
+    //trace_printf("extent3: %lx\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_3 + tile * 0x100) >> 10);
+    //trace_printf("stride3: %d\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_ITER_CTRL_3 + tile * 0x100) & 0x3ff);
 
     HAL_Cgra_Glb_WriteReg(GLB_TILE0_LD_DMA_HEADER_0_VALIDATE + tile * 0x100, 1);
-    trace_printf("validate: %d\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_VALIDATE + tile * 0x100) & 0x3ff);
+    //trace_printf("validate: %d\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_LD_DMA_HEADER_0_VALIDATE + tile * 0x100) & 0x3ff);
   }
 
   if (output) {
-    //trace_printf ("\n** Setup Store 3 side (glb reg writes) **\n");
+    ////trace_printf ("\n** Setup Store 3 side (glb reg writes) **\n");
     // Setup store side.
     HAL_Cgra_Glb_WriteReg(GLB_TILE0_ST_DMA_HEADER_0_START_ADDR + tile * 0x100, (tile << 18) + 0x20000);
-    trace_printf("output addr: %lx\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_ST_DMA_HEADER_0_START_ADDR + tile * 0x100));
+    //trace_printf("output addr: %lx\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_ST_DMA_HEADER_0_START_ADDR + tile * 0x100));
     HAL_Cgra_Glb_WriteReg(GLB_TILE0_ST_DMA_HEADER_0_NUM_WORDS + tile * 0x100, (u32) num_read_data);
-    trace_printf("num words: %d\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_ST_DMA_HEADER_0_NUM_WORDS + tile * 0x100));
+    //trace_printf("num words: %d\r\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_ST_DMA_HEADER_0_NUM_WORDS + tile * 0x100));
     HAL_Cgra_Glb_WriteReg(GLB_TILE0_ST_DMA_HEADER_0_VALIDATE + tile * 0x100, 1);
-    trace_printf("validate: %lx\r\n\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_ST_DMA_HEADER_0_VALIDATE + tile * 0x100));
+    //trace_printf("validate: %lx\r\n\n", HAL_Cgra_Glb_ReadReg(GLB_TILE0_ST_DMA_HEADER_0_VALIDATE + tile * 0x100));
   }
 
   return;
@@ -407,7 +393,7 @@ void wait_for_interrupt() {
     // //printf("wfi WAIT %d %d %d\n", HAL_Cgra_Glc_ReadReg(GLC_GLOBAL_ISR),
     // HAL_Cgra_Glc_ReadReg(GLC_STRM_F2G_ISR), HAL_Cgra_Glc_ReadReg(GLC_STRM_G2F_ISR));
     // counter++;
-    trace_printf("In wfi\r\n");
+    //trace_printf("In wfi\r\n");
   }
   // //printf("counter %d\n", counter);
   return;
@@ -448,7 +434,7 @@ void CGRA_IRQHandler(void) {
   __NVIC_ClearPendingIRQ(CGRA_IRQn);
   NVIC_DisableIRQ(CGRA_IRQn);
   cgra_int_occured = 1;
-  //trace_printf("cgra handled\r\n");
+  ////trace_printf("cgra handled\r\n");
 
   //         //printf("Handler: %d\n", HAL_Cgra_Glc_ReadReg(cgra_int_code));
   // //printf("123456789101112\n");

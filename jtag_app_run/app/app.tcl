@@ -47,7 +47,6 @@ set APP_INPUT_DATA  [list \
 # - Element 2: Source Address
 # - Element 3: Size of Data
 set APP_OUTPUT_DATA [list \
-        [list [scoped_file_name Output.bin] 0x20400200 2904] \
         [list [scoped_file_name out_image2.bin] 0x204A0000 2904] \
         [list [scoped_file_name out_image3.bin] 0x204E0000 2904] \
         [list [scoped_file_name out_image4.bin] 0x20520000 2904] \
