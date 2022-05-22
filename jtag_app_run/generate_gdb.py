@@ -1,4 +1,4 @@
-def generate_gdb():
+def generate_gdb(app):
     f = open("app/new_script.gdb", "w")
 
     f.write("target remote localhost:2331\n")
@@ -13,21 +13,21 @@ def generate_gdb():
     f.write("load /Users/kkoul/AHA_demo/jtag_app_run/app/test_app.elf\n")
 
 
-    x_step = 1
-    x_tiles = 21
-    x_dim = 66
+    # TODO generalize past unsharp
+    output_tile_size = hex(int(app["x_dim"]*app["y_dim"]/3*2))[2:]
 
-    y_step = 66
-    y_tiles = 35
-    y_dim = 66
-    column = []
+    while(len(output_tile_size) < 4):
+        output_tile_size = '0' + output_tile_size
+
+    print(output_tile_size)
 
     x = 0
     y = 0
 
+
     tile_mismatch = 0
-    for height in range(y_tiles):
-        for width in range(x_tiles):
+    for height in range(app["y_tiles"]):
+        for width in range(app["x_tiles"]):
             tile = str(y)+"_"+str(x)
             
             f.write("monitor clrbp\n")
@@ -57,20 +57,20 @@ def generate_gdb():
             f.write("b _exit\n")
             f.write("continue\n")
             f.write("step\n")
-            f.write("dump binary memory /Users/kkoul/AHA_demo/jtag_app_run/app/output_bin/" + tile + "/out_image2.bin 0x204A0000 0x204A0B58\n")
-            f.write("dump binary memory /Users/kkoul/AHA_demo/jtag_app_run/app/output_bin/" + tile + "/out_image3.bin 0x204E0000 0x204E0B58\n")
-            f.write("dump binary memory /Users/kkoul/AHA_demo/jtag_app_run/app/output_bin/" + tile + "/out_image4.bin 0x20520000 0x20520B58\n")
-            f.write("dump binary memory /Users/kkoul/AHA_demo/jtag_app_run/app/output_bin/" + tile + "/out_image5.bin 0x20560000 0x20560B58\n")
-            f.write("dump binary memory /Users/kkoul/AHA_demo/jtag_app_run/app/output_bin/" + tile + "/out_image6.bin 0x205A0000 0x205A0B58\n")
-            f.write("dump binary memory /Users/kkoul/AHA_demo/jtag_app_run/app/output_bin/" + tile + "/out_image7.bin 0x205E0000 0x205E0B58\n")
-            f.write("dump binary memory /Users/kkoul/AHA_demo/jtag_app_run/app/output_bin/" + tile + "/out_image8.bin 0x20620000 0x20620B58\n")
-            f.write("dump binary memory /Users/kkoul/AHA_demo/jtag_app_run/app/output_bin/" + tile + "/out_image9.bin 0x20660000 0x20660B58\n")
-            f.write("dump binary memory /Users/kkoul/AHA_demo/jtag_app_run/app/output_bin/" + tile + "/out_image10.bin 0x206A0000 0x206A0B58\n")
+            f.write("dump binary memory /Users/kkoul/AHA_demo/jtag_app_run/app/output_bin/" + tile + "/out_image2.bin 0x204A0000 0x204A" + output_tile_size+ "\n")
+            f.write("dump binary memory /Users/kkoul/AHA_demo/jtag_app_run/app/output_bin/" + tile + "/out_image3.bin 0x204E0000 0x204E" + output_tile_size+ "\n")
+            f.write("dump binary memory /Users/kkoul/AHA_demo/jtag_app_run/app/output_bin/" + tile + "/out_image4.bin 0x20520000 0x2052" + output_tile_size+ "\n")
+            f.write("dump binary memory /Users/kkoul/AHA_demo/jtag_app_run/app/output_bin/" + tile + "/out_image5.bin 0x20560000 0x2056" + output_tile_size+ "\n")
+            f.write("dump binary memory /Users/kkoul/AHA_demo/jtag_app_run/app/output_bin/" + tile + "/out_image6.bin 0x205A0000 0x205A" + output_tile_size+ "\n")
+            f.write("dump binary memory /Users/kkoul/AHA_demo/jtag_app_run/app/output_bin/" + tile + "/out_image7.bin 0x205E0000 0x205E" + output_tile_size+ "\n")
+            f.write("dump binary memory /Users/kkoul/AHA_demo/jtag_app_run/app/output_bin/" + tile + "/out_image8.bin 0x20620000 0x2062" + output_tile_size+ "\n")
+            f.write("dump binary memory /Users/kkoul/AHA_demo/jtag_app_run/app/output_bin/" + tile + "/out_image9.bin 0x20660000 0x2066" + output_tile_size+ "\n")
+            f.write("dump binary memory /Users/kkoul/AHA_demo/jtag_app_run/app/output_bin/" + tile + "/out_image10.bin 0x206A0000 0x206A" + output_tile_size+ "\n")
 
-            x = x + x_step
+            x = x + app["x_step"]
 
         x = 0
-        y = y + y_step
+        y = y + app["y_step"]
 
 
     f.write("quit\n")
@@ -78,4 +78,4 @@ def generate_gdb():
     f.close()
 
 if __name__ == '__main__':
-    generate_gdb()
+    generate_gdb(app)

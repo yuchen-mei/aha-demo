@@ -1,8 +1,8 @@
 import sys
 import numpy as np
 
-def bin_to_raw(output_file):
-    design_place = 'design.place'
+def bin_to_raw(app, output_file):
+    design_place = app["design_place"]
     new_dir = output_file.replace("hw_output_","")
     new_dir = new_dir.replace(".raw","")
     bin_folder = 'app/output_bin/'  + new_dir + "/"
@@ -59,7 +59,7 @@ def bin_to_raw(output_file):
     fi.close() 
 
 if __name__ == '__main__':
-    bin_to_raw(output_file)
+    bin_to_raw(app, output_file)
 
 
 

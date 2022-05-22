@@ -1,8 +1,8 @@
 import sys
 import os
 
-def raw_to_bin(input_file):
-    design_place = 'design.place'
+def raw_to_bin(app, input_file):
+    design_place = app["design_place"]
     input_image = input_file
 
 
@@ -43,7 +43,7 @@ def raw_to_bin(input_file):
             input_data_int.append(int(input_data0[j], 16))
         # make file
         current_dir = os.getcwd()
-        new_dir = input_image.replace("gold/hw_input_stencil_","")
+        new_dir = input_image.replace(app["gold"] + "/hw_input_stencil_","")
         new_dir = new_dir.replace(".raw","")
         new_dir_input = "app/input_bin/" + new_dir 
         new_dir_output = "app/output_bin/" + new_dir 

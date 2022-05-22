@@ -12,35 +12,40 @@ def full_image():
 
     print("full image script", flush=True)
 
-    generate_gdb.generate_gdb()
+    app = {
+        "gold": "gold",
+        "design_place": "design.place",
 
-    x_step = 1
-    x_tiles = 21
-    x_dim = 66
+        "x_step": 1,
+        "x_tiles": 21,
+        "x_dim": 66,
 
-    y_step = 66
-    y_tiles = 35
-    y_dim = 66
-    column = []
+        "y_step": 66,
+        "y_tiles": 35,
+        "y_dim": 66
+    }
+
+    generate_gdb.generate_gdb(app)
+
+
 
     x = 0
     y = 0
 
     start = time.time()
 
-    for height in range(y_tiles):
-        for width in range(x_tiles):
+    for height in range(app['y_tiles']):
+        for width in range(app['x_tiles']):
             start = time.time()
-            tile_in = "gold/hw_input_stencil_"+str(y)+"_"+str(x)+".raw"
-            tile_out = "hw_output_"+str(y)+"_"+str(x)+".raw"
+            tile_in = app["gold"] + "/hw_input_stencil_"+str(y)+"_"+str(x)+".raw"
 
             # Convert raw to binaries for glb
-            raw_to_bin_glb.raw_to_bin(tile_in)
+            raw_to_bin_glb.raw_to_bin(app, tile_in)
             
-            x = x + x_step
+            x = x + app['x_step']
 
         x = 0
-        y = y + y_step
+        y = y + app['y_step']
 
     print("time to generate bins")
     print(time.time() - start)
@@ -56,30 +61,29 @@ def full_image():
     x = 0
     y = 0
 
-    for height in range(y_tiles):
-        for width in range(x_tiles):
+    for height in range(app['y_tiles']):
+        for width in range(app['x_tiles']):
             start = time.time()
-            tile_in = "gold/hw_input_stencil_"+str(y)+"_"+str(x)+".raw"
             tile_out = "hw_output_"+str(y)+"_"+str(x)+".raw"
             
             # Convert output binaries into output raw file
-            bin_to_raw_glb.bin_to_raw(tile_out)
+            bin_to_raw_glb.bin_to_raw(app, tile_out)
 
-            # diff chip output raw with gold raw
-            # cmd = "diff chip/" + tile_out + " " + "gold/" + tile_out
+            # diff chip output raw with gold_ltu raw
+            # cmd = "diff chip/" + tile_out + " " + "gold_ltu/" + tile_out
             # try:   
             #     diff = subprocess.run([cmd], shell=True, check=True)   
             # except CalledProcessError:
             #     print("output image mismatch")
 
-            x = x + x_step
+            x = x + app['x_step']
 
         x = 0
-        y = y + y_step
+        y = y + app['y_step']
 
  
     
-    combine_raw.combine_raw()
+    combine_raw.combine_raw(app)
 
     print("time to convert to raw and generate png")
     print(time.time() - start)
