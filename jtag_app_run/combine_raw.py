@@ -54,7 +54,7 @@ def combine_raw():
     imgSize = (x_dim*x_tiles, y_dim*y_tiles)
     img = Image.frombytes('RGB', imgSize, rawData)
     img.save("full_image.png")
-
+    img.show()
 
 if __name__ == '__main__':
     combine_raw()

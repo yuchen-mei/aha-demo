@@ -6,10 +6,13 @@ import time
 import bin_to_raw_glb
 import raw_to_bin_glb
 import combine_raw
+import generate_gdb
 
 def full_image():
 
     print("full image script", flush=True)
+
+    generate_gdb.generate_gdb()
 
     x_step = 1
     x_tiles = 21

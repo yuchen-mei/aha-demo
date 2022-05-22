@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "diag/trace.h"
 #include "app/regmap.h"
-#include "app/unsharp_input_script_new.h"
+//#include "app/unsharp_input_script_new.h"
 #include "app/unsharp_script.h"
 #include "amberm3vx_hal.h"
 
@@ -68,8 +68,8 @@ main(int argc, char * argv[]) {
   //            (1 << AHASOC_PCTRL_CGRA_Pos);
   //status = HAL_PtfmCtrl_SelectClock(&PtfmCtl, dma_mask, 0x0);
   //status = HAL_PtfmCtrl_SelectClock(&PtfmCtl, cgra_mask, 0x2); // 2 ^ power divide
-  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, cgra_mask, 0); // 2^1 = 2 60/2 = 30
-  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, sys_mask, 0); // 2^2 = 4 60/4 = 15
+  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, cgra_mask, 1); // 2^1 = 2 60/2 = 30
+  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, sys_mask, 1); // 2^2 = 4 60/4 = 15
   status = HAL_PtfmCtrl_DisableCG( & PtfmCtl, cgra_mask);
   status = HAL_PtfmCtrl_ClearReset( & PtfmCtl, cgra_mask);
 
@@ -86,26 +86,27 @@ main(int argc, char * argv[]) {
 // Main test function.
 u32 test_app(void) {
 
-	uint16_t app_input_data[4] = {0,0,0,0};
-	//uint16_t app_gold_data[4] = {0,0,0,0};
-	int app_input_data_size = 15552;
-	//int app_gold_data_size = 4;
+
 
 
   int i;
 
   //const int NUM_APP_DATA = app_input_data_size;
-  const int NUM_READ_DATA = app_gold_data_size;
+  const int NUM_READ_DATA = 13068;
 
   //uint16_t app_data[NUM_APP_DATA];
-  uint16_t gold_data[NUM_READ_DATA];
   //for (i = 0; i < NUM_APP_DATA; i++) app_data[i] = (uint16_t) app_input_data[i];
   //for (i = 0; i < NUM_READ_DATA; i++) gold_data[i] = (uint16_t) app_gold_data[i];
 
   int deploy_tile = 2;
 
-  const u32 start_addr = 0x00000 + 0x40000 * deploy_tile;
-  const u32 read_start_addr = 0x20000 + 0x40000 * deploy_tile;
+
+  u64 * base_ptr = (u16*) (AHASOC_CGRA_DATA_BASE + 0x40000*2+ 0x20000);
+  u32 addr = base_ptr[2] >> 32;
+  u32 data = base_ptr[2] & 0xffffffff;
+
+//  trace_printf("addr2: %lx\n", addr);
+//  trace_printf("data2: %lx\n", data);
 
 
   //trace_printf("addr0: %lx\n", (u32) (bitstream[0] >> 32));
@@ -115,8 +116,9 @@ u32 test_app(void) {
   //trace_printf("datae: %lx\n", (u32) (bitstream[app_size-1] & 0xffffffff));
 
   HAL_Cgra_Glc_WriteReg(GLC_STALL, 0xFFFF);
+  //u32 bitstream = {0,0};
   write_cgra_configuration_streaming(bitstream,
-    app_size);
+    4068);
 
   //trace_printf("bitstream size: %d \r\n", app_size);
   //    for (int i = 0; i < app_size; i++) {
@@ -128,22 +130,22 @@ u32 test_app(void) {
 
   int error = 0;
   //trace_printf("do compare\r\n");
-/*  for (int i = 0; i < app_size; i++) {
-    u64 addr = bitstream[i];
-    u32 addr_shifted = addr >> 32;
-    if (HAL_Cgra_Tile_ReadReg(addr_shifted) != (bitstream[i] & 0xffffffff)) {
-//      //trace_printf("index: %d \r\n", i);
-//      //trace_printf("addr: %lx \r\n", addr_shifted);
-//      //trace_printf("recieved value: %lx \r\n", (u32) HAL_Cgra_Tile_ReadReg(addr_shifted));
-//      //trace_printf("correct value: %lx \r\n", (u32)(bitstream[i] & 0xffffffff));
-      error++;
-    }
-  }*/
+//  for (int i = 0; i < app_size; i++) {
+//    u64 addr = bitstream[i];
+//    u32 addr_shifted = addr >> 32;
+//    if (HAL_Cgra_Tile_ReadReg(addr_shifted) != (bitstream[i] & 0xffffffff)) {
+//      trace_printf("index: %d \r\n", i);
+//      trace_printf("addr: %lx \r\n", addr_shifted);
+//      trace_printf("recieved value: %lx \r\n", (u32) HAL_Cgra_Tile_ReadReg(addr_shifted));
+//      trace_printf("correct value: %lx \r\n", (u32)(bitstream[i] & 0xffffffff));
+//      error++;
+//    }
+//  }
 
-  if (error != 0) {
-    //trace_printf("Failed streaming config, errors: %d\r\n", error);
-    //return 0;
-  }
+//  if (error != 0) {
+//    trace_printf("Failed streaming config, errors: %d\r\n", error);
+//    //return 0;
+//  }
   cgra_int_occured = 0;
 
   //////trace_printf("\n** Write extent to GLB memory tile 0 **\n");
