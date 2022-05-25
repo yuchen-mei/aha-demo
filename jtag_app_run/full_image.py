@@ -13,16 +13,28 @@ def full_image():
     print("full image script", flush=True)
 
     app = {
-        "gold": "gold",
-        "design_place": "design.place",
+        # "gold": "gold_cp",
+        # "elf": "camera_pipeline.elf",
+        # "design_place": "design_cp.place",
+        # "x_step": 1,
+        # "x_tiles": 1,
+        # "x_dim": 256,
+        # "y_step": 192,
+        # "y_dim": 192,
+        # "y_tiles": 1,
 
+        # "gold": "gold_small",
+        "gold": "gold",
+        "elf": "test_app.elf",
+        "design_place": "design.place",
         "x_step": 1,
+        # "x_tiles": 2,
         "x_tiles": 21,
         "x_dim": 66,
-
         "y_step": 66,
+        # "y_tiles": 4,
         "y_tiles": 35,
-        "y_dim": 66
+        "y_dim": 66,
     }
 
     generate_gdb.generate_gdb(app)

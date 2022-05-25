@@ -1,13 +1,8 @@
 import sys
 import os
 
-def raw_to_bin(app, input_file):
+def place_to_input(app):
     design_place = app["design_place"]
-    input_image = input_file
-
-
-    shift = 2
-
     # read in design.place
     input_io = []
     with open(design_place, "r") as f:
@@ -23,6 +18,13 @@ def raw_to_bin(app, input_file):
     input_place = []
     for input in input_io:
         input_place.append(int(input.split('\t')[2]) // 2)
+    
+    return input_place
+
+def raw_to_bin(app, input_file):
+    input_image = input_file
+
+    input_place = place_to_input(app)
 
     input_unroll = len(input_place)
 
@@ -53,6 +55,7 @@ def raw_to_bin(app, input_file):
             os.mkdir(input_path)
         if not os.path.isdir(output_path):
             os.mkdir(output_path)
+        shift = 2
         bin_file_name = input_path + "/image_" + str(input_place[i] + shift) + ".bin"
         bin_file = open(bin_file_name, "wb")
         # write to file

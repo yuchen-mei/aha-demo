@@ -1,13 +1,9 @@
 import sys
 import numpy as np
 
-def bin_to_raw(app, output_file):
-    design_place = app["design_place"]
-    new_dir = output_file.replace("hw_output_","")
-    new_dir = new_dir.replace(".raw","")
-    bin_folder = 'app/output_bin/'  + new_dir + "/"
+def place_to_output(app):
 
-    shift = 2
+    design_place = app["design_place"]
 
     # read in design.place, TODO change to output
     input_io = []
@@ -32,22 +28,34 @@ def bin_to_raw(app, output_file):
     for input in strip_io:
         input_place.append(int(input.split('\t')[2]) // 2)
 
-    input_unroll = len(input_place)
+    return input_place
+
+def bin_to_raw(app, output_file):
+    design_place = app["design_place"]
+    new_dir = output_file.replace("hw_output_","")
+    new_dir = new_dir.replace(".raw","")
+    bin_folder = 'app/output_bin/'  + new_dir + "/"
+
+
+    input_place = place_to_output(app)
 
     # print(input_place)
 
     input_data = []
 
+    shift = 2
     # read all bin files
-    for i in range(input_unroll):
+    sorted_inputs = sorted(input_place)
+    for i in sorted_inputs:
         with open(bin_folder + "out_image" + str(shift + i) + ".bin", "rb") as f:
             input_data.append(f.read())
 
     raw = []
 
+
     for j in range(int(len(input_data[0])/2)):
-        for i in range(input_unroll):
-            idx = input_place[i]
+        for i in range(len(input_place)):
+            idx = input_place[i] - min(input_place)
             raw.append(input_data[idx][2*j+1])
             raw.append(input_data[idx][2*j])
 
