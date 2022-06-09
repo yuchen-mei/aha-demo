@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+import re
 
 def place_to_output(app):
 
@@ -20,12 +21,27 @@ def place_to_output(app):
         strip_io.append(idx)
 
     strip_io.sort()
-    # print(strip_io)
+
+    # Hacky way to make 10 come after 0-9 
+    strip_io_resorted = []
+
+    for io in strip_io:
+        remove_front = re.sub('hcompute_hw_output_global_wrapper_stencil_', '', io)
+        remove_back = re.sub('_write_0.*', '', remove_front)
+        if(len(remove_back) == 2):
+            strip_io_resorted.append(io)
+    
+    for io in strip_io:
+        remove_front = re.sub('hcompute_hw_output_global_wrapper_stencil_', '', io)
+        remove_back = re.sub('_write_0.*', '', remove_front)
+        if(len(remove_back) > 2):
+            strip_io_resorted.append(io)
+
 
 
     # extract placment
     input_place = []
-    for input in strip_io:
+    for input in strip_io_resorted:
         input_place.append(int(input.split('\t')[2]) // 2)
 
     return input_place

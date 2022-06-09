@@ -29,6 +29,8 @@ def generate_gdb(app):
     # TODO HACKY
     if(len(output_place) == 9):
         unroll = 3
+    elif (len(output_place) == 12):
+        unroll = 4
     else:
         unroll = 1    
     output_tile_size = app["x_dim"]*app["y_dim"]//unroll*2

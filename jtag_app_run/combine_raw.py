@@ -47,7 +47,25 @@ def combine_raw(app):
     imgSize = (app["x_dim"]*app["x_tiles"], app["y_dim"]*app["y_tiles"])
     img = Image.frombytes('RGB', imgSize, rawData)
     img.save("full_image.png")
-    img.show()
+
+
+    if(app["gold"] == "gold_cp_small_dog"):
+        pixels = list(img.getdata())
+        pixels_first_half = pixels[::2]
+        pixels_second_half = pixels[1::2]
+
+        shuffle = []
+        for i in range(336//2):
+            shuffle = shuffle + (pixels_first_half[i*248:i*248+248])
+            shuffle = shuffle + (pixels_second_half[i*248:i*248+248])
+            
+        new_img = Image.new("RGB", (app["x_dim"], app["y_dim"]))
+        new_img.putdata(shuffle)
+        new_img.save('full_image.png')
+        new_img.show()
+    else: 
+        img.show()
+
 
 if __name__ == '__main__':
     combine_raw(app)

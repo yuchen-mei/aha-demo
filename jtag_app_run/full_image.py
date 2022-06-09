@@ -2,6 +2,7 @@ import sys
 import subprocess
 import os
 import time
+from PIL import Image
 import json
 
 import bin_to_raw_glb
@@ -11,7 +12,7 @@ import generate_gdb
 
 def full_image(app_json):
 
-    print("full image script", flush=True)
+    #print("full image script", flush=True)
 
     with open(sys.argv[1]) as json_file:
         app = json.load(json_file)
@@ -37,23 +38,28 @@ def full_image(app_json):
         x = 0
         y = y + app['y_step']
 
-    print("time to generate bins")
-    print(time.time() - start)
+    # print("time to generate bins")
+    # print(time.time() - start)
     start = time.time()
+
+    img = Image.open(app["input_image"])
+    img.show()
+
+    wait = input("Accelerate Application")
 
     subprocess.run(["./Run.sh"], shell=True, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
     #subprocess.run(["./Run.sh"], shell=True, check=True)
 
-    print("time to run image")
-    print(time.time() - start)
-    start = time.time()
+    # print("time to run image")
+    # print(time.time() - start)
+    #start = time.time()
 
     x = 0
     y = 0
 
     for height in range(app['y_tiles']):
         for width in range(app['x_tiles']):
-            start = time.time()
+            # start = time.time()
             tile_out = "hw_output_"+str(y)+"_"+str(x)+".raw"
             
             # Convert output binaries into output raw file
@@ -75,8 +81,8 @@ def full_image(app_json):
     
     combine_raw.combine_raw(app)
 
-    print("time to convert to raw and generate png")
-    print(time.time() - start)
+    # print("time to convert to raw and generate png")
+    # print(time.time() - start)
 
 if __name__ == '__main__':
     full_image(sys.argv[1])
