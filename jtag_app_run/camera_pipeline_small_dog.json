@@ -1,0 +1,12 @@
+{
+    "gold": "gold_cp_small_dog", 
+	"input_image": "bayer_small.png",
+    "elf": "test_app.elf", 
+    "design_place": "gold_cp_small_dog/design.place", 
+    "x_step": 1, 
+    "x_dim": 248, 
+    "x_tiles": 1, 
+    "y_step": 336, 
+    "y_dim": 336, 
+    "y_tiles": 1
+}

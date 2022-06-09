@@ -1,0 +1,12 @@
+{
+"gold": "gold_small",
+"input_image": "rgb_small.png",
+"elf": "unsharp.elf",
+"design_place": "gold_small/design.place",
+"x_step": 1,
+"x_tiles": 2,
+"x_dim": 66,
+"y_step": 66,
+"y_tiles": 4,
+"y_dim": 66
+}
