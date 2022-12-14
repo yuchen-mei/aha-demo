@@ -68,8 +68,8 @@ main(int argc, char * argv[]) {
   //            (1 << AHASOC_PCTRL_CGRA_Pos);
   //status = HAL_PtfmCtrl_SelectClock(&PtfmCtl, dma_mask, 0x0);
   //status = HAL_PtfmCtrl_SelectClock(&PtfmCtl, cgra_mask, 0x2); // 2 ^ power divide
-  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, cgra_mask, 1); // 2^1 = 2 60/2 = 30
-  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, sys_mask, 2); // 2^2 = 4 60/4 = 15
+  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, cgra_mask, 4); // 2^1 = 2 60/2 = 30
+  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, sys_mask, 5); // 2^2 = 4 60/4 = 15
   status = HAL_PtfmCtrl_DisableCG( & PtfmCtl, cgra_mask);
   status = HAL_PtfmCtrl_ClearReset( & PtfmCtl, cgra_mask);
 
@@ -262,35 +262,40 @@ u32 test_app(void) {
 		  app_gold_data_size / banks);
 
 
-for (int cnt=0; cnt < 1; cnt++){
-
+  // bit map for starting tiles
+  int stream_pulse_val = 0;
+//  for (int i = 0; i < unroll*7; i++){
+//	  stream_pulse_val = (stream_pulse_val << 1) | 1;
+//  }
   NVIC_ClearPendingIRQ(CGRA_IRQn);
   NVIC_EnableIRQ(CGRA_IRQn);
   cgra_int_code = GLC_STRM_F2G_ISR;
-
   HAL_Cgra_Glc_WriteReg(GLC_GLOBAL_IER, 0x7);
   HAL_Cgra_Glc_WriteReg(GLC_STRM_F2G_IER, 0xffff);
-  HAL_Cgra_Glc_WriteReg(GLC_STALL, 0b00);
 
-  // bit map for starting tiles
-  int stream_pulse_val = 0;
   stream_pulse_val = 0x071C;
+  //trace_printf("stream_pulse_val : %lx", stream_pulse_val);
+
+  // shift by deploy
+  //stream_pulse_val = stream_pulse_val << (deploy_tile);
+
+
 
 
   HAL_Cgra_Glc_WriteReg(GLC_STREAM_START_PULSE, stream_pulse_val); // pulsed reg.
 
-
+  //////trace_printf("\n** Wait for interrupt  **\n");
+  // Wait for GLB interrupt signaling writes are done.
+  ////trace_printf("Errors in setup: %d\r\n", error);
   wait_for_interrupt();
 
-
-
-
   cgra_int_occured = 0;
+  //trace_printf("finish");
 
-}
-
-
-int err = 0;
+  ////trace_printf("Finished interrupt\r\n", error);
+  //trace_printf("\n** Check with Gold  **\n");
+  // Check app output data.
+  int err = 0;
 
 
   u16 * read_base = AHASOC_CGRA_DATA_BASE + read_start_addr;
@@ -459,9 +464,10 @@ void wait_for_interrupt() {
   // Wait for interrupt (spin loop on cgra_int_occured).
   int counter = 0;
 
+//  trace_printf("enter\n");
   while (!cgra_int_occured) {
-    // //printf("wfi WAIT %d %d %d\n", HAL_Cgra_Glc_ReadReg(GLC_GLOBAL_ISR),
-    // HAL_Cgra_Glc_ReadReg(GLC_STRM_F2G_ISR), HAL_Cgra_Glc_ReadReg(GLC_STRM_G2F_ISR));
+    //trace_printf("wfi WAIT %lx %lx %lx\n", HAL_Cgra_Glc_ReadReg(GLC_GLOBAL_ISR),
+    //HAL_Cgra_Glc_ReadReg(GLC_STRM_F2G_ISR), HAL_Cgra_Glc_ReadReg(GLC_STRM_G2F_ISR));
     // counter++;
     //trace_printf("In wfi\r\n");
   }
@@ -504,15 +510,20 @@ void CGRA_IRQHandler(void) {
   __NVIC_ClearPendingIRQ(CGRA_IRQn);
   NVIC_DisableIRQ(CGRA_IRQn);
   cgra_int_occured = 1;
-  ////trace_printf("cgra handled\r\n");
+  //trace_printf("cgra handled\r\n");
 
-  //         //printf("Handler: %d\n", HAL_Cgra_Glc_ReadReg(cgra_int_code));
+  //trace_printf("Handler: %lx\n", HAL_Cgra_Glc_ReadReg(cgra_int_code));
   // //printf("123456789101112\n");
-  // //printf("CGRA Handler WAIT %d %d %d %d\n", HAL_Cgra_Glc_ReadReg(GLC_GLOBAL_ISR),
-  // HAL_Cgra_Glc_ReadReg(GLC_STRM_F2G_ISR), HAL_Cgra_Glc_ReadReg(GLC_STRM_G2F_ISR),
-  // HAL_Cgra_Glc_ReadReg(GLC_PAR_CFG_G2F_ISR));
+//  trace_printf("CGRA Handler WAIT %lx %lx %lx %lx\n", HAL_Cgra_Glc_ReadReg(GLC_GLOBAL_ISR),
+//   HAL_Cgra_Glc_ReadReg(GLC_STRM_F2G_ISR), HAL_Cgra_Glc_ReadReg(GLC_STRM_G2F_ISR),
+//   HAL_Cgra_Glc_ReadReg(GLC_PAR_CFG_G2F_ISR));
+//  if(cgra_int_code == GLC_STRM_F2G_ISR){
+//	  HAL_Cgra_Glc_WriteReg(cgra_int_code, 1<<2 | 1<<8);
+//  } else {
+//	  HAL_Cgra_Glc_WriteReg(cgra_int_code, 1<<2);
+//  }
+  	  HAL_Cgra_Glc_WriteReg(cgra_int_code, 1);
 
-  HAL_Cgra_Glc_WriteReg(cgra_int_code, 1);
 }
 
 /* -------------------------------------------------------------------- */

@@ -2,15 +2,15 @@
 #include <stdlib.h>
 #include "diag/trace.h"
 #include "app/regmap.h"
-#include "app/harris_color_440_input_script.h"
-#include "app/harris_color_440_script.h"
+#include "app/gaussian_input_script.h"
+#include "app/gaussian_script.h"
 #include "amberm3vx_hal.h"
 
 
 HAL_PtfmCtrl_t PtfmCtl;
 
 u32 test_app(void);
-void write_cgra_configuration_streaming(u64 * , int, u32, int);
+void write_cgra_configuration_streaming(u64 * , int);
 void write_glb_memory(u32, u16 * , int, int, int);
 void wait_for_interrupt();
 void write_glb_setup(u32, int, int, int, int,
@@ -86,7 +86,7 @@ main(int argc, char * argv[]) {
 // Main test function.
 u32 test_app(void) {
 
-  trace_printf("Harris Color\n");
+  trace_printf("Gaussian\n");
 
 
   int i;
@@ -98,67 +98,34 @@ u32 test_app(void) {
 
   int deploy_tile = 2;
 
-  u32 start_addr = 0x00000 + 0x40000 * deploy_tile;
-  u32 read_start_addr = 0x20000 + 0x40000 * deploy_tile;
+  const u32 start_addr = 0x00000 + 0x40000 * deploy_tile;
+  const u32 read_start_addr = 0x20000 + 0x40000 * deploy_tile;
 
 
   HAL_Cgra_Glc_WriteReg(GLC_STALL, 0xFFFF);
 
-
-
-  for(int j=0; j < 2; j++){
-	  u32 addr = bitstream[0] >> 32;
-	  u32 value = bitstream[0] & 0xffffffff;
-	  trace_printf("bitstream addr:%lx\n", addr);
-	  trace_printf("bitstream data:%lx\n", value);
-	  write_cgra_configuration_streaming(bitstream, app_size, start_addr, 0);
-	  trace_printf("\n");
-	  //start_addr = start_addr + (0x40000*6);
-	  cgra_int_occured = 0;
-	  trace_printf("do compare\r\n");
-	  for (int i = 0; i < app_size; i++) {
-	    u64 addr2 = bitstream[i];
-	    u32 addr_shifted = addr2 >> 32;
-	    if (HAL_Cgra_Tile_ReadReg(addr_shifted) != (bitstream[i] & 0xffffffff)) {
-	      trace_printf("index: %d \r\n", i);
-	      trace_printf("addr: %lx \r\n", addr_shifted);
-	      trace_printf("recieved value: %lx \r\n", (u32) HAL_Cgra_Tile_ReadReg(addr_shifted));
-	      trace_printf("correct value: %lx \r\n", (u32)(bitstream[i] & 0xffffffff));
-	      //error++;
-	    }
-	  }
-	  if(j < 1){
-		  for (int k=0; k < app_size; k++){
-			  u32 addr = bitstream[k] >> 32;
-			  u32 value = bitstream[k] & 0xffffffff;
-			  u64 bitstream_val = (addr & 0x0000ff00);
-			  //trace_printf("bitstream_val: %lx\n", bitstream_val);
-			  bitstream_val = ((((addr & 0x0000ff00) >> 8) + 12) << 8) + (addr & 0xffff00ff);
-			  bitstream[k] = (bitstream_val << 32) | value;
-		  }
-	  }
-  }
+  write_cgra_configuration_streaming(bitstream,
+    app_size);
 
 
 
   int error = 0;
-//  trace_printf("do compare\r\n");
-//  for (int i = 0; i < app_size; i++) {
-//    u64 addr = bitstream[i];
-//    u32 addr_shifted = addr >> 32;
-//    if (HAL_Cgra_Tile_ReadReg(addr_shifted) != (bitstream[i] & 0xffffffff)) {
-//      trace_printf("index: %d \r\n", i);
-//      trace_printf("addr: %lx \r\n", addr_shifted);
-//      trace_printf("recieved value: %lx \r\n", (u32) HAL_Cgra_Tile_ReadReg(addr_shifted));
-//      trace_printf("correct value: %lx \r\n", (u32)(bitstream[i] & 0xffffffff));
-//      error++;
-//    }
-//  }
+  trace_printf("do compare\r\n");
+  for (int i = 0; i < app_size; i++) {
+    u64 addr = bitstream[i];
+    u32 addr_shifted = addr >> 32;
+    if (HAL_Cgra_Tile_ReadReg(addr_shifted) != (bitstream[i] & 0xffffffff)) {
+      trace_printf("index: %d \r\n", i);
+      trace_printf("addr: %lx \r\n", addr_shifted);
+      trace_printf("recieved value: %lx \r\n", (u32) HAL_Cgra_Tile_ReadReg(addr_shifted));
+      trace_printf("correct value: %lx \r\n", (u32)(bitstream[i] & 0xffffffff));
+      error++;
+    }
+  }
 
-  trace_printf("finish compare\n");
-//  if (error > 0){
-//	  return 1;
-//  }
+  if (error > 0){
+	  return 1;
+  }
 
   cgra_int_occured = 0;
 
@@ -166,44 +133,21 @@ u32 test_app(void) {
 
 
 
-  int unroll = 3;
-  int banks = 1;
-  int unroll_array[3] = {
-  0, 1, 2
+  int unroll = 14;
+  int banks = 14;
+  int unroll_array[14] = {
+  0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 1, 2, 3, 4
   };
-  int bank_array[1] = {
-  0
+  int bank_array[14] = {
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
   };
 
-  start_addr = 0x00000 + 0x40000 * deploy_tile;
-  trace_printf("start data copy\n");
+
   // Write extent to GLB memory tile 0.
-  for(int j=0; j < 2; j++){
-	  for (int i = 0; i < unroll; i++) {
-		write_glb_memory((0x40000*6*j) + start_addr + 0x40000 * unroll_array[i], (u16 * ) app_input_data, app_input_data_size / unroll, i, unroll);
-	  }
+  for (int i = 0; i < unroll; i++) {
+    write_glb_memory(start_addr + 0x40000 * unroll_array[i], (u16 * ) app_input_data, app_input_data_size / unroll, i, unroll);
   }
 
-    u16 * pixel_check0 = AHASOC_CGRA_DATA_BASE + start_addr;
-    u16 * pixel_check1 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*1;
-    u16 * pixel_check2 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*2;
-    u16 * pixel_check3 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*3;
-    u16 * pixel_check4 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*4;
-    u16 * pixel_check5 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*5;
-    u16 * pixel_check6 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*6;
-    u16 * pixel_check7 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*7;
-    u16 * pixel_check8 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*8;
-
-    trace_printf("pixel0: %d\n", pixel_check0[0]);
-    trace_printf("pixel1: %d\n", pixel_check1[0]);
-    trace_printf("pixel2: %d\n", pixel_check2[0]);
-
-    trace_printf("pixel3: %d\n", pixel_check6[0]);
-    trace_printf("pixel4: %d\n", pixel_check7[0]);
-    trace_printf("pixel5: %d\n", pixel_check8[0]);
-
-
-  trace_printf("copy data finished\n");
   // Stream extent to CGRA.
 
   /*void write_glb_setup(u32 tile, int input, int output,
@@ -214,55 +158,17 @@ u32 test_app(void) {
 					int extent3, int stride3,
   					int app_gold_data_size)*/
 
-
-
-  write_glb_setup(2, 1, 1,
+  for(int i=2; i<16; i++){
+  write_glb_setup(i, 1, 1,
 		  1, 0,
-		  5184, 1,
+		  1000, 1,
 		  0, 0,
 		  0, 0,
 		  0, 0,
 		  app_gold_data_size / banks);
-  write_glb_setup(3, 1, 0,
-		  1, 0,
-		  5184, 1,
-		  0, 0,
-		  0, 0,
-		  0, 0,
-		  app_gold_data_size / banks);
-  write_glb_setup(4, 1, 0,
-		  1, 0,
-		  5184, 1,
-		  0, 0,
-		  0, 0,
-		  0, 0,
-		  app_gold_data_size / banks);
+  }
 
 
-  write_glb_setup(8, 1, 1,
-		  1, 0,
-		  5184, 1,
-		  0, 0,
-		  0, 0,
-		  0, 0,
-		  app_gold_data_size / banks);
-  write_glb_setup(9, 1, 0,
-		  1, 0,
-		  5184, 1,
-		  0, 0,
-		  0, 0,
-		  0, 0,
-		  app_gold_data_size / banks);
-  write_glb_setup(10, 1, 0,
-		  1, 0,
-		  5184, 1,
-		  0, 0,
-		  0, 0,
-		  0, 0,
-		  app_gold_data_size / banks);
-
-
-for (int cnt=0; cnt < 1; cnt++){
 
   NVIC_ClearPendingIRQ(CGRA_IRQn);
   NVIC_EnableIRQ(CGRA_IRQn);
@@ -274,31 +180,61 @@ for (int cnt=0; cnt < 1; cnt++){
 
   // bit map for starting tiles
   int stream_pulse_val = 0;
-  stream_pulse_val = 0x071C;
+  for (int i = 0; i < unroll; i++){
+	  stream_pulse_val = (stream_pulse_val << 1) | 1;
+  }
 
+  // shift by deploy
+  stream_pulse_val = stream_pulse_val << (deploy_tile);
 
   HAL_Cgra_Glc_WriteReg(GLC_STREAM_START_PULSE, stream_pulse_val); // pulsed reg.
 
-
+  //////trace_printf("\n** Wait for interrupt  **\n");
+  // Wait for GLB interrupt signaling writes are done.
+  ////trace_printf("Errors in setup: %d\r\n", error);
   wait_for_interrupt();
 
+  ////trace_printf("Finished interrupt\r\n", error);
+  //trace_printf("\n** Check with Gold  **\n");
+  // Check app output data.
+  int err = 0;
+
+
+  u16 * output_pixel_check0 = AHASOC_CGRA_DATA_BASE + start_addr + 0x20000;
+  u16 * output_pixel_check1 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*1 + 0x20000;
+  u16 * output_pixel_check2 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*2 + 0x20000;
+  u16 * output_pixel_check3 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*3 + 0x20000;
+  u16 * output_pixel_check4 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*4 + 0x20000;
+  u16 * output_pixel_check5 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*5 + 0x20000;
+  u16 * output_pixel_check6 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*6 + 0x20000;
+  u16 * output_pixel_check7 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*7 + 0x20000;
+  u16 * output_pixel_check8 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*8 + 0x20000;
+  u16 * output_pixel_check9 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*9 + 0x20000;
+  u16 * output_pixel_check10 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*10 + 0x20000;
+  u16 * output_pixel_check11 = AHASOC_CGRA_DATA_BASE + start_addr + 0x40000*11 + 0x20000;
 
 
 
-  cgra_int_occured = 0;
+//  trace_printf("pixel0: %lx\n", output_pixel_check0[0]);
+//  trace_printf("pixel1: %lx\n", output_pixel_check1[0]);
+//  trace_printf("pixel2: %lx\n", output_pixel_check2[0]);
+//  trace_printf("pixel3: %lx\n", output_pixel_check3[0]);
+//  trace_printf("pixel4: %lx\n", output_pixel_check4[0]);
+//  trace_printf("pixel5: %lx\n", output_pixel_check5[0]);
+//  trace_printf("pixel6: %lx\n", output_pixel_check6[0]);
+//  trace_printf("pixel7: %lx\n", output_pixel_check7[0]);
+//  trace_printf("pixel8: %lx\n", output_pixel_check8[0]);
+//  trace_printf("pixel9: %lx\n", output_pixel_check9[0]);
+//  trace_printf("pixel10: %lx\n", output_pixel_check10[0]);
+//  trace_printf("pixel11: %lx\n", output_pixel_check11[0]);
 
-}
 
-
-int err = 0;
 
 
   u16 * read_base = AHASOC_CGRA_DATA_BASE + read_start_addr;
-  for(int j=0; j < 2; j++){
-	  trace_printf("unroll:%d\n", j);
   for (int b = 0; b < banks; b++){
 	  int bank = bank_array[b];
-	  read_base = AHASOC_CGRA_DATA_BASE + read_start_addr + bank*0x40000 + 6*j*0x40000;
+	  read_base = AHASOC_CGRA_DATA_BASE + read_start_addr + bank*0x40000;
 	  for (i = 0; i < app_gold_data_size/banks; i++) {
 		if ((u16)(read_base[i] & 0xff) != (u16) app_gold_data[i*banks+b]) {
 		  err++;
@@ -308,7 +244,6 @@ int err = 0;
 		}
 		read_base[i] = 0;
 	  }
-  }
   }
 
   trace_printf("Application finished errors: %d\n", err);
@@ -349,25 +284,24 @@ void write_glb_memory_bitstream(u32 start_addr, u64 * data, int size) {
 
 // Streaming CGRA configuration write (SWRITE).
 void write_cgra_configuration_streaming(u64 * addrs, //u32 *datas,
-  int size, u32 start_addr, int copy) {
+  int size) {
   // Load config into GLB memory.
 
   // printf ("\n** Stream Calculation Finished **\n");
   //write_glb_memory(0x00000 + 0x40000 * 2, config, size);
-  write_glb_memory_bitstream(start_addr, addrs, size);
+  write_glb_memory_bitstream(0x00000 + 0x40000 * 2, addrs, size);
 
   // printf ("\n** Configure Tile 0 for write stream **\n");
   // Configure GLB Tile 0 for write stream.
 
-  trace_printf("copy: %d\r\n", copy);
   const u32 TILE_CTRL_VALUE = (1 << 10);
-  HAL_Cgra_Glb_WriteReg(0x200 + 0x00 + (0x200*(6*copy)), TILE_CTRL_VALUE);
-  trace_printf("tile ctrl: %lx\r\n", HAL_Cgra_Glb_ReadReg(0x200 + 0x00 + (0x200*(6*copy))));
-  HAL_Cgra_Glb_WriteReg(0x200 + 0xa8 + (0x200*(6*copy)), start_addr);
-  trace_printf("start addr: %lx\r\n", HAL_Cgra_Glb_ReadReg(0x200 + 0xa8 + (0x200*(6*copy))));
-  HAL_Cgra_Glb_WriteReg(0x200 + 0xac + (0x200*(6*copy)), size * 2);
+  HAL_Cgra_Glb_WriteReg(0x200 + 0x00, TILE_CTRL_VALUE);
+  trace_printf("tile ctrl: %lx\r\n", HAL_Cgra_Glb_ReadReg(0x200 + 0x00));
+  HAL_Cgra_Glb_WriteReg(0x200 + 0xa8, 0x00000 + 0x40000 * 2);
+  trace_printf("start addr: %lx\r\n", HAL_Cgra_Glb_ReadReg(0x200 + 0xa8));
+  HAL_Cgra_Glb_WriteReg(0x200 + 0xac, size * 2);
   //HAL_Cgra_Glb_WriteReg(0x200 + 0xac, 0x10000);
-  trace_printf("size : %d\r\n", HAL_Cgra_Glb_ReadReg(0x200 + 0xac + (0x200*(6*copy))));
+  trace_printf("size : %d\r\n", HAL_Cgra_Glb_ReadReg(0x200 + 0xac));
 
   cgra_int_code = 0x30;
 
@@ -376,12 +310,12 @@ void write_cgra_configuration_streaming(u64 * addrs, //u32 *datas,
   NVIC_ClearPendingIRQ(CGRA_IRQn);
   NVIC_EnableIRQ(CGRA_IRQn);
 
-  HAL_Cgra_Glc_WriteReg(0x20, 1 << (2+(6*copy))); // input tile
+  HAL_Cgra_Glc_WriteReg(0x20, 1 << 2); // input tile
   HAL_Cgra_Glc_WriteReg(0x24, 1 << 2);
 
   // printf ("\n** Start PC **\n");
   // Start PC
-  HAL_Cgra_Glc_WriteReg(0x14, 1 << (2+(6*copy))); // input tile
+  HAL_Cgra_Glc_WriteReg(0x14, 1 << 2); // input tile
 
   wait_for_interrupt();
 }
