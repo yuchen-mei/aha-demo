@@ -1,0 +1,256 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "diag/trace.h"
+
+#include "amberm3vx_hal.h"
+#include "pointwise_gops_input_script.h"
+#include "pointwise_gops_unroll_reg_write.h"
+#include "pointwise_gops_unroll_script.h"
+#include "glb.h"
+#include "glc.h"
+#include "memory.h"
+
+
+#define AHASOC_PCTRL_SYS_Pos                  0
+#define AHASOC_PCTRL_CPU_Pos                  1
+#define AHASOC_PCTRL_DAP_Pos                  2
+#define AHASOC_PCTRL_DMA0_Pos                 3
+#define AHASOC_PCTRL_DMA1_Pos                 4
+#define AHASOC_PCTRL_SRAM_Pos                 5
+#define AHASOC_PCTRL_TLX_FWD_Pos              6
+#define AHASOC_PCTRL_TLX_REV_Pos              7
+#define AHASOC_PCTRL_CGRA_Pos                 8
+#define AHASOC_PCTRL_NIC_Pos                  9
+#define AHASOC_PCTRL_TIMER0_Pos               10
+#define AHASOC_PCTRL_TIMER1_Pos               11
+#define AHASOC_PCTRL_UART0_Pos                12
+#define AHASOC_PCTRL_UART1_Pos                13
+#define AHASOC_PCTRL_WDOG_Pos                 14
+#define AHASOC_ROM_BASE          (0x00000000UL)  /*!< (ROM     ) Base Address */
+#define AHASOC_SRAM_BASE         (0x20000000UL)  /*!< (SRAM      ) Base Address */
+#define AHASOC_SRAM_BANK0_BASE   (0x20000000UL)  /*!< (SRAM      ) Base Address */
+#define AHASOC_SRAM_BANK1_BASE   (0x20008000UL)  /*!< (SRAM      ) Base Address */
+#define AHASOC_SRAM_BANK2_BASE   (0x20010000UL)  /*!< (SRAM      ) Base Address */
+#define AHASOC_SRAM_BANK3_BASE   (0x20018000UL)  /*!< (SRAM      ) Base Address */
+#define AHASOC_SRAM_END_ADDR     (0x2001FFFFUL)  /*!< (SRAM      ) Base Address */
+#define AHASOC_PERIPH_BASE       (0x40000000UL)  /*!< (Peripheral) Base Address */
+#define AHASOC_TLX_BASE          (0x60000000UL)  /*!< (TLX       ) Base Address */
+#define AHASOC_CGRA_DATA_BASE    (0x20400000UL)  /*!< (CGRA DATA ) Base Address */
+#define AHASOC_CGRA_REG_BASE     (0x40010000UL)  /*!< (CGRA REG  ) Base Address */
+#define AHASOC_TLXCTRL_BASE      (0x40014000UL)  /*!< (TLX REG  ) Base Address */
+
+HAL_PtfmCtrl_t PtfmCtl;
+
+
+void write_glb_memory_bitstream(uint32_t start_addr, uint64_t* data, int size) {
+
+  uint64_t* base_ptr = (uint64_t*) (AHASOC_CGRA_DATA_BASE + start_addr);
+
+  for(int i = 0; i < size; i++) {
+    base_ptr[i] = data[i];
+  }
+
+
+}
+
+uint64_t make_config(uint32_t addr, uint32_t data) {
+  uint64_t long_addr = (uint64_t) addr;
+  return ((long_addr << 32) | data);
+}
+
+void write_cgra_configuration_streaming(uint32_t* addrs,
+          uint32_t* datas,
+          int size) {
+  // Load config into GLB memory.
+  uint64_t config[size];
+  int i;
+  for (i = 0; i < size; i++) {
+    config[i] = make_config(addrs[i], datas[i]);
+  }
+  trace_printf("\n** Stream Calculation Finished **\n");
+
+  write_glb_memory_bitstream(0x20000, config, size);
+
+  uint32_t* read_base = AHASOC_CGRA_DATA_BASE + 0x20000;
+
+  for(int i= 0; i < size; i++){
+	  if(datas[i] != read_base[2*i]){
+		  trace_printf("index %d, datas %lx read_base %lx\n", i, datas[i], read_base[2*i]);
+	  }
+	  if(addrs[i] != read_base[2*i+1]){
+		  trace_printf("index %d, datas %lx read_base %lx\n", i, addrs[i], read_base[2*i+1]);
+	  }
+  }
+
+
+  trace_printf("\n** Configure Tile 0 for write stream **\n");
+  // Configure GLB Tile 0 for write stream.
+
+  bitstream_glb_config();
+
+
+  trace_printf("\n** Start PC **\n");
+  HAL_Cgra_Glc_WriteReg(GLC_GLB_FLUSH_CROSSBAR_R, 0);
+  HAL_Cgra_Glc_WriteReg(GLC_CGRA_STALL_R, 0xFFFF);
+  HAL_Cgra_Glc_WriteReg(GLC_PC_START_PULSE_R, 1);
+
+}
+
+
+
+int
+
+main(int argc, char* argv[])
+{
+  HAL_UNUSED(argc);
+  HAL_UNUSED(argv);
+
+  // Send a greeting to the trace device
+  trace_printf("Hi Yuchen!\r\n");
+
+
+
+
+  int status = HAL_PtfmCtrl_Initialize( & PtfmCtl);
+  trace_printf("status1 %d\n", status);
+
+
+  u32 cgra_mask = (1 << AHASOC_PCTRL_CGRA_Pos);
+  u32 sys_mask = (1 << AHASOC_PCTRL_SYS_Pos);
+
+
+
+  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, cgra_mask, 0); // 2^1 = 2 60/2 = 30
+  trace_printf("status2 %d\n", status);
+  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, sys_mask, 3); // 2^2 = 4 60/4 = 15
+  trace_printf("status3 %d\n", status);
+  status = HAL_PtfmCtrl_DisableCG( & PtfmCtl, cgra_mask);
+  trace_printf("status4 %d\n", status);
+  status = HAL_PtfmCtrl_ClearReset( & PtfmCtl, cgra_mask);
+  trace_printf("status5 %d\n", status);
+
+  trace_printf("status %d\n", status);
+
+
+  trace_printf("\nCONFIG pointwise gops\n");
+
+
+// write_cgra_configuration_streaming(app_addrs_script, app_datas_script, app_size);
+
+  for (int config = 0; config < app_size; config++){
+	  HAL_Cgra_Tile_WriteReg(app_addrs_script[config], app_datas_script[config]);
+  }
+
+
+
+  trace_printf("\nWAIT TO FINISH\n");
+
+
+  HAL_Cgra_Tile_WriteReg(0x030A0301, 0x00B00000);
+  trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x030A0301));
+  HAL_Cgra_Tile_WriteReg(0x020A0301, 0x00000008);
+  trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x020A0301));
+
+  for (int config = 0; config < app_size; config++){
+	  uint32_t read_data = HAL_Cgra_Tile_ReadReg(app_addrs_script[config]);
+	  uint32_t addr = app_addrs_script[config];
+	  uint32_t gold = app_datas_script[config];
+
+	  if( HAL_Cgra_Tile_ReadReg(app_addrs_script[config]) != gold){
+		  trace_printf("config error: %d ", config);
+		  trace_printf("address: %lx ", addr);
+		  trace_printf("read_data %lx ", read_data);
+		  trace_printf("gold data %lx\n", gold);
+		  HAL_Cgra_Tile_WriteReg(addr, gold);
+		  break;
+	  }
+  }
+  HAL_Cgra_Tile_WriteReg(0x030A0301, 0x00B00000);
+  trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x030A0301));
+  HAL_Cgra_Tile_WriteReg(0x020A0301, 0x00000008);
+  trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x020A0301));
+
+
+
+
+
+
+  trace_printf("\nMOVE DATA TO GLB\n");
+
+
+
+  for(int i =0; i < 8; i++){
+	  write_glb_memory(0x00000+2*i*0x40000, app_input_stencil_data, app_input_stencil_data_size, 0, 1);
+  }
+
+  uint16_t* read_base = AHASOC_CGRA_DATA_BASE;
+  for(int i =0; i < 8; i++){
+	  read_base = AHASOC_CGRA_DATA_BASE + 0x00000+2*i*0x40000;
+	  for(int i=0; i < app_input_stencil_data_size; i++){
+		  if (read_base[i] != app_input_stencil_data[i]){
+			  trace_printf("input pixel mismatch %d, read_data %lx gold data %lx\n", i, read_base[i], app_input_stencil_data[i]);
+		  }
+	  }
+
+  }
+
+
+
+  trace_printf("\nCONFIG GLB\n");
+
+  for(int i =0; i < 4; i++){
+	  app_glb_config(i*2);
+  }
+
+  trace_printf("\nAPP Prep\n");
+
+  HAL_Cgra_Glc_WriteReg(GLC_GLB_FLUSH_CROSSBAR_R, 0);
+  trace_printf("read/write glb test reg: %lx\n", HAL_Cgra_Glc_ReadReg(GLC_GLB_FLUSH_CROSSBAR_R));
+
+
+  HAL_Cgra_Glc_WriteReg(GLC_CGRA_STALL_R, 0x0);
+
+
+
+  HAL_Cgra_Glc_WriteReg(GLC_GLOBAL_IER_R, 1);
+  HAL_Cgra_Glc_WriteReg(GLC_STRM_F2G_IER_R, 0xffff);
+  HAL_Cgra_Glc_WriteReg(GLC_STRM_G2F_IER_R, 0xffff);
+
+
+  for(int loop = 0; loop < 1; loop++){
+  HAL_Cgra_Glc_WriteReg(GLC_STREAM_START_PULSE_R, (0x55 << 16) | 0x55);
+
+
+  while(HAL_Cgra_Glc_ReadReg(GLC_STRM_G2F_ISR_R) != 0x55){
+      //cnt++;
+  }
+  }
+
+  trace_printf("f2g interrupt %lx\n", HAL_Cgra_Glc_ReadReg(GLC_STRM_F2G_ISR_R));
+  trace_printf("g2f interrupt %lx\n", HAL_Cgra_Glc_ReadReg(GLC_STRM_G2F_ISR_R));
+
+
+
+  trace_printf("wait for app\n");
+
+  int error = 0;
+
+  for(int j=0; j < 4; j++){
+	  read_base = AHASOC_CGRA_DATA_BASE + 0x20000 + 0x40000*j*2;
+	  trace_printf("bank %d \n", j);
+	  for(int i=0; i < app_output_data_size; i++){
+		  if (read_base[i] != app_output_data[i]){
+			  trace_printf("output pixel mismatch %d, read_data %lx gold data %lx\n", i, read_base[i], app_output_data[i]);
+			  error++;
+		  }
+		  read_base[i] = 0xfefe;
+		  if (error > 10){
+			  break;
+		  }
+	  }
+
+  }
+  trace_printf("check gold data\n");
+
+  return 0;
+}

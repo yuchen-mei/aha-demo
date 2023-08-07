@@ -1,0 +1,247 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "diag/trace.h"
+
+#include "amberm3vx_hal.h"
+#include "unsharp_475_input_script.h"
+#include "unsharp_475_script.h"
+#include "unsharp_475_reg_write.h"
+#include "unsharp_475_unrolling.h"
+#include "glb.h"
+#include "glc.h"
+#include "memory.h"
+
+
+#define AHASOC_PCTRL_SYS_Pos                  0
+#define AHASOC_PCTRL_CPU_Pos                  1
+#define AHASOC_PCTRL_DAP_Pos                  2
+#define AHASOC_PCTRL_DMA0_Pos                 3
+#define AHASOC_PCTRL_DMA1_Pos                 4
+#define AHASOC_PCTRL_SRAM_Pos                 5
+#define AHASOC_PCTRL_TLX_FWD_Pos              6
+#define AHASOC_PCTRL_TLX_REV_Pos              7
+#define AHASOC_PCTRL_CGRA_Pos                 8
+#define AHASOC_PCTRL_NIC_Pos                  9
+#define AHASOC_PCTRL_TIMER0_Pos               10
+#define AHASOC_PCTRL_TIMER1_Pos               11
+#define AHASOC_PCTRL_UART0_Pos                12
+#define AHASOC_PCTRL_UART1_Pos                13
+#define AHASOC_PCTRL_WDOG_Pos                 14
+#define AHASOC_ROM_BASE          (0x00000000UL)  /*!< (ROM     ) Base Address */
+#define AHASOC_SRAM_BASE         (0x20000000UL)  /*!< (SRAM      ) Base Address */
+#define AHASOC_SRAM_BANK0_BASE   (0x20000000UL)  /*!< (SRAM      ) Base Address */
+#define AHASOC_SRAM_BANK1_BASE   (0x20008000UL)  /*!< (SRAM      ) Base Address */
+#define AHASOC_SRAM_BANK2_BASE   (0x20010000UL)  /*!< (SRAM      ) Base Address */
+#define AHASOC_SRAM_BANK3_BASE   (0x20018000UL)  /*!< (SRAM      ) Base Address */
+#define AHASOC_SRAM_END_ADDR     (0x2001FFFFUL)  /*!< (SRAM      ) Base Address */
+#define AHASOC_PERIPH_BASE       (0x40000000UL)  /*!< (Peripheral) Base Address */
+#define AHASOC_TLX_BASE          (0x60000000UL)  /*!< (TLX       ) Base Address */
+#define AHASOC_CGRA_DATA_BASE    (0x20400000UL)  /*!< (CGRA DATA ) Base Address */
+#define AHASOC_CGRA_REG_BASE     (0x40010000UL)  /*!< (CGRA REG  ) Base Address */
+#define AHASOC_TLXCTRL_BASE      (0x40014000UL)  /*!< (TLX REG  ) Base Address */
+
+HAL_PtfmCtrl_t PtfmCtl;
+
+
+void write_glb_memory_bitstream(uint32_t start_addr, uint64_t* data, int size) {
+
+  uint64_t* base_ptr = (uint64_t*) (AHASOC_CGRA_DATA_BASE + start_addr);
+
+  for(int i = 0; i < size; i++) {
+    base_ptr[i] = data[i];
+  }
+
+
+}
+
+uint64_t make_config(uint32_t addr, uint32_t data) {
+  uint64_t long_addr = (uint64_t) addr;
+  return ((long_addr << 32) | data);
+}
+
+void write_cgra_configuration_streaming(uint32_t* addrs,
+          uint32_t* datas,
+          int size) {
+  // Load config into GLB memory.
+  uint64_t config[size];
+  int i;
+  for (i = 0; i < size; i++) {
+    config[i] = make_config(addrs[i], datas[i]);
+  }
+  trace_printf("\n** Stream Calculation Finished **\n");
+
+  write_glb_memory_bitstream(0x0, config, size);
+
+  uint32_t* read_base = AHASOC_CGRA_DATA_BASE;
+  for (int i =0; i < size; i++){
+	  if(read_base[2*i] != datas[i]){
+		  trace_printf("glb error index %d, data gold %lx data %lx\n", i, read_base[i], datas[i]);
+	  }
+	  if(read_base[2*i+1] != addrs[i]){
+		  trace_printf("glb error index %d, addr gold %lx addr %lx\n", i, read_base[i], addrs[i]);
+	  }
+  }
+
+
+  trace_printf("\n** Configure Tile 0 for write stream **\n");
+  // Configure GLB Tile 0 for write stream.
+
+  bitstream_glb_config();
+
+
+  trace_printf("\n** Start PC **\n");
+  HAL_Cgra_Glc_WriteReg(GLC_GLB_FLUSH_CROSSBAR_R, 0);
+  HAL_Cgra_Glc_WriteReg(GLC_CGRA_STALL_R, 0xFFFF);
+  HAL_Cgra_Glc_WriteReg(GLC_PC_START_PULSE_R, 1);
+
+}
+
+
+
+int
+
+main(int argc, char* argv[])
+{
+  HAL_UNUSED(argc);
+  HAL_UNUSED(argv);
+
+  // Send a greeting to the trace device
+  trace_printf("Hi Yuchen!\r\n");
+
+
+
+
+  int status = HAL_PtfmCtrl_Initialize( & PtfmCtl);
+  trace_printf("status1 %d\n", status);
+
+
+  u32 cgra_mask = (1 << AHASOC_PCTRL_CGRA_Pos);
+  u32 sys_mask = (1 << AHASOC_PCTRL_SYS_Pos);
+
+
+
+  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, cgra_mask, 0); // 2^1 = 2 60/2 = 30
+  trace_printf("status2 %d\n", status);
+  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, sys_mask, 3); // 2^2 = 4 60/4 = 15
+  trace_printf("status3 %d\n", status);
+  status = HAL_PtfmCtrl_DisableCG( & PtfmCtl, cgra_mask);
+  trace_printf("status4 %d\n", status);
+  status = HAL_PtfmCtrl_ClearReset( & PtfmCtl, cgra_mask);
+  trace_printf("status5 %d\n", status);
+
+  trace_printf("status %d\n", status);
+
+
+  trace_printf("\nCONFIG unsharp\n");
+
+
+  write_cgra_configuration_streaming(app_addrs_script, app_datas_script, app_size);
+
+//  for (int config = 0; config < app_size; config++){
+//	  HAL_Cgra_Tile_WriteReg(app_addrs_script[config], app_datas_script[config]);
+//  }
+
+  trace_printf("\nWAIT TO FINISH\n");
+
+
+  HAL_Cgra_Tile_WriteReg(0x030D060A, 0x00000007);
+  trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x030D060A));
+  HAL_Cgra_Tile_WriteReg(0x030D050A, 0x00000005);
+  trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x030D050A));
+
+  for (int config = 0; config < app_size; config++){
+	  uint32_t read_data = HAL_Cgra_Tile_ReadReg(app_addrs_script[config]);
+	  uint32_t addr = app_addrs_script[config];
+	  uint32_t gold = app_datas_script[config];
+
+	  if ( read_data != gold){
+		  trace_printf("config error: %d ", config);
+		  trace_printf("address: %lx ", addr);
+		  trace_printf("read_data %lx ", read_data);
+		  trace_printf("gold data %lx\n", gold);
+	  }
+  }
+  HAL_Cgra_Tile_WriteReg(0x030D060A, 0x00000007);
+  trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x030D060A));
+  HAL_Cgra_Tile_WriteReg(0x030D050A, 0x00000005);
+  trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x030D050A));
+
+
+
+
+
+  trace_printf("\nMOVE DATA TO GLB\n");
+  move_input_data();
+
+  uint16_t* read_base = AHASOC_CGRA_DATA_BASE;
+//  for (int i = 0; i < app_tensor_B_mode_0_0_data_size; i++) {
+//	if (read_base[i] != app_tensor_B_mode_0_0_data[i])
+//		trace_printf("glb 0 error i %d val: %lx correct:%lx\n", i, read_base[i], app_tensor_B_mode_0_0_data[i]);
+//  }
+//  read_base = AHASOC_CGRA_DATA_BASE + 0x40000*1;
+//  for (int i = 0; i < app_tensor_C_mode_0_0_data_size; i++) {
+//	if (read_base[i] != app_tensor_C_mode_0_0_data[i])
+//		trace_printf("glb 1 error i %d val: %lx correct:%lx\n", i, read_base[i], app_tensor_C_mode_0_0_data[i]);
+//  }
+//  read_base = AHASOC_CGRA_DATA_BASE + 0x40000*2;
+//  for (int i = 0; i < app_tensor_B_mode_1_0_data_size; i++) {
+//	if (read_base[i] != app_tensor_B_mode_1_0_data[i])
+//		trace_printf("glb 2 error i %d val: %lx correct:%lx\n", i, read_base[i], app_tensor_B_mode_1_0_data[i]);
+//  }
+//  read_base = AHASOC_CGRA_DATA_BASE + 0x40000*3;
+//  for (int i = 0; i < app_tensor_C_mode_1_0_data_size; i++) {
+//	if (read_base[i] != app_tensor_C_mode_1_0_data[i])
+//		trace_printf("glb 3error i %d val: %lx correct:%lx\n", i, read_base[i], app_tensor_C_mode_1_0_data[i]);
+//  }
+//  read_base = AHASOC_CGRA_DATA_BASE + 0x40000*4;
+//  for (int i = 0; i < app_tensor_B_mode_vals_0_data_size; i++) {
+//	if (read_base[i] != app_tensor_B_mode_vals_0_data[i])
+//		trace_printf("glb 4 error i %d val: %lx correct:%lx\n", i, read_base[i], app_tensor_B_mode_vals_0_data[i]);
+//  }
+//  read_base = AHASOC_CGRA_DATA_BASE + 0x40000*5;
+//  for (int i = 0; i < app_tensor_C_mode_vals_0_data_size; i++) {
+//	if (read_base[i] != app_tensor_C_mode_vals_0_data[i])
+//		trace_printf("glb 5 error i %d val: %lx correct:%lx\n", i, read_base[i], app_tensor_C_mode_vals_0_data[i]);
+//  }
+
+  trace_printf("\nCONFIG GLB\n");
+
+  app_glb_config();
+
+  trace_printf("\nAPP Prep\n");
+
+  HAL_Cgra_Glc_WriteReg(GLC_GLB_FLUSH_CROSSBAR_R, 0);
+  trace_printf("read/write glb test reg: %lx\n", HAL_Cgra_Glc_ReadReg(GLC_GLB_FLUSH_CROSSBAR_R));
+
+
+  HAL_Cgra_Glc_WriteReg(GLC_CGRA_STALL_R, 0x0);
+
+
+  HAL_Cgra_Glc_WriteReg(GLC_STREAM_START_PULSE_R, (0x7 << 16) | 0x7);
+
+
+  trace_printf("wait for app\n");
+
+  int error = 0;
+
+  read_base = AHASOC_CGRA_DATA_BASE + 0x40000*0 + 0x20000;
+
+  for(int i=0; i < 15; i++){
+	  trace_printf("val %lx\n", read_base[i]);
+  }
+  trace_printf("\n");
+  read_base = AHASOC_CGRA_DATA_BASE + 0x40000*1 + 0x20000;
+  for(int i=0; i < 15; i++){
+	  trace_printf("val %lx\n", read_base[i]);
+  }
+  trace_printf("\n");
+  read_base = AHASOC_CGRA_DATA_BASE + 0x40000*2 + 0x20000;
+  for(int i=0; i < 15; i++){
+	  trace_printf("val %lx\n", read_base[i]);
+  }
+
+
+  trace_printf("check gold data\n");
+  check_gold_data();
+  return 0;
+}

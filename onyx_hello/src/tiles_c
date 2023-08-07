@@ -1,0 +1,300 @@
+//-----------------------------------------------------------------------------
+// C-Language
+//-----------------------------------------------------------------------------
+// Purpose: Garnet CGRA Integration Tests
+//
+//------------------------------------------------------------------------------
+//
+// Author   : Gedeon Nyengele
+// Date     : Apr 29, 2020
+//------------------------------------------------------------------------------
+#include <assert.h>
+#include <inttypes.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "AHASOC.h"
+#include "AHASOC_driver.h"
+#include "garnet.h"
+#include "uart_stdout.h"
+#include "dma_utils.h"
+#include "memory.h"
+#include "script.h"
+#include "input_script.h"
+#include "reg_write.h"
+#include "unrolling.h"
+#include "print_action.h"
+#include "glb.h"
+#include "glc.h"
+
+#define TRUE 1
+#define FALSE 0
+
+unsigned int from[1024] __attribute__((aligned(8)));
+unsigned int to[1024] __attribute__((aligned(8)));
+
+int test_app(void);
+void write_glb_memory_bitstream(uint32_t, uint64_t * , int);
+void write_cgra_configuration_streaming(uint32_t * , uint32_t * , int);
+void write_glb_memory(uint32_t, uint16_t * , int, int, int);
+void wait_for_interrupt();
+
+// Global interrupt flag and expected interrupt code.
+volatile uint32_t cgra_int_occured;
+volatile uint32_t cgra_int_code;
+
+int main(void) {
+  cgra_int_occured = 0;
+
+  AHASOC_PCTRL_TypeDef * pctrl = AHASOC_PCTRL;
+
+  // Enable UART0 and CGRA.
+  // divide sys clock
+  //uint32_t mask = (1 << AHASOC_PCTRL_UART0_Pos) | (1 << AHASOC_PCTRL_DMA0_Pos) | (1 << AHASOC_PCTRL_CGRA_Pos);
+  // same clock
+  uint32_t mask = (1 << AHASOC_PCTRL_UART0_Pos) | (1 << AHASOC_PCTRL_DMA0_Pos) | (1 << AHASOC_PCTRL_CGRA_Pos) | (1 << AHASOC_PCTRL_SYS_Pos);
+  AHASOC_pctrl_SelectClock(pctrl, mask, 0x0);
+  AHASOC_pctrl_DisableCG(pctrl, mask);
+  AHASOC_pctrl_ClearReset(pctrl, mask);
+
+  // UART init.
+  UartStdOutInit();
+
+  // Test banner message and revision number.
+  puts("\nAHASOC - App Test\n");
+
+  int err = test_app();
+
+  // Generate test pass/fail and return value.
+  if (err == 0) {
+    printf("\n** TEST PASSED **\n");
+  } else {
+    printf("\n** TEST FAILED **, Error code = (0x%x)\n", err);
+  }
+  UartEndSimulation();
+
+  return 0;
+}
+
+// Main test function.
+int test_app(void) {
+
+  int i;
+
+  const uint32_t start_addr = 0x0;
+  const uint32_t read_start_addr = 0x20000;
+
+  // Stream CGRA config.
+  // printf("\n** Stream Config **\n");
+
+  write_cgra_configuration_streaming(app_addrs_script, app_datas_script, app_size);
+  cgra_int_occured = 0;
+
+  //printf ("\n** Write app data to GLB memory tile 0 **\n");
+  move_input_data();
+
+  // Setup load side.
+  app_glb_config();
+
+  // configure flush crossbar
+  glc_reg_write(GLC_GLB_FLUSH_CROSSBAR_R, 0);
+
+  //printf ("\n** Enable interrupts (including PC)  and start stream **\n");
+  glc_reg_write(GLC_GLOBAL_IER_R, 1);
+  glc_reg_write(GLC_PAR_CFG_G2F_IER_R, 0x0);
+  glc_reg_write(GLC_STRM_F2G_IER_R, 0xffff);
+  glc_reg_write(GLC_STRM_G2F_IER_R, 0x0);
+
+  NVIC_ClearPendingIRQ(CGRA_IRQn);
+  NVIC_EnableIRQ(CGRA_IRQn);
+  cgra_int_code = GLC_STRM_F2G_ISR_R;
+
+  glc_reg_write(GLC_CGRA_STALL_R, 0);
+
+  int stream_pulse_val = stream_pulse();
+
+  printf("\n** Run  **\n");
+
+  uint16_t * read_base = (uint16_t*) (AHASOC_CGRA_DATA_BASE + read_start_addr);
+  uint16_t * read_base2 = (uint16_t*) (AHASOC_CGRA_DATA_BASE + read_start_addr + 0x40000);
+  uint16_t * read_base3 = (uint16_t*) (AHASOC_CGRA_DATA_BASE + read_start_addr + 2*0x40000);
+
+  int mode0_idx = 0;
+  int mode1_idx = 0;
+  int vals_idx = 0;
+
+
+  for(int run=0; run < runs; run++){
+    glc_reg_write(GLC_STREAM_START_PULSE_R, stream_pulse_val); // pulsed reg.
+
+    // Wait for GLB interrupt signaling writes are done.
+    wait_for_interrupt();
+
+    // Don't update for last tile
+    if(run == runs-1){
+      break;
+    }
+
+    int size; 
+    size = read_base[mode0_idx];
+    int mode0_size = size + 1 + read_base[mode0_idx + size + 1] + 1;
+    size = read_base2[mode1_idx];
+    int mode1_size = size + 1 + read_base2[mode1_idx + size + 1] + 1;
+    int vals_size = read_base3[vals_idx] + 1;
+
+    mode0_idx += mode0_size;
+    mode1_idx += mode1_size;
+    vals_idx += vals_size;
+
+    //printf("run %d\n", run);
+    //printf("mode0_size %d\n", mode0_size);
+    //printf("mode1_size %d\n", mode1_size);
+    //printf("vals_size %d\n", vals_size);
+    //printf("mode0_idx %d\n", mode0_idx);
+    //printf("mode1_idx %d\n", mode1_idx);
+    //printf("vals_idx %d\n\n", vals_idx);
+
+    // GLB is byte addressable so 2x
+    glb_reg_write(0x100 * 0 + GLB_ST_DMA_HEADER_0_START_ADDR_R, 0x20000 + 0x40000*0 + mode0_idx*2);
+    glb_reg_write(0x100 * 1 + GLB_ST_DMA_HEADER_0_START_ADDR_R, 0x20000 + 0x40000*1 + mode1_idx*2);
+    glb_reg_write(0x100 * 2 + GLB_ST_DMA_HEADER_0_START_ADDR_R, 0x20000 + 0x40000*2 + vals_idx*2);
+
+
+    update_glb_pointer_start_addr(run);
+    update_glb_pointer_extent(run+1);
+
+    cgra_int_occured = 0;
+    NVIC_ClearPendingIRQ(CGRA_IRQn);
+    NVIC_EnableIRQ(CGRA_IRQn);
+  }
+
+  printf("\n** Check with Gold  **\n");
+  // Check app output data.
+  int err = 0;
+
+//  err = check_gold_data();
+
+  return (err > 0) ? 1 : 0;
+}
+
+//void write_glb_memory(uint32_t start_addr, uint16_t* data, int size, int num, int stride) {
+//  int i;
+//  uint16_t * base_ptr = (uint16_t*) (AHASOC_CGRA_DATA_BASE + start_addr);
+//
+//  for (i = 0; i < size; i++) {
+//    base_ptr[i] = data[i * stride + num];
+//  }
+//}
+
+void write_glb_memory_bitstream(uint32_t start_addr, uint64_t * data, int size) {
+
+  uint64_t * base_ptr = (uint64_t * )(AHASOC_CGRA_DATA_BASE + start_addr);
+
+  for (int i = 0; i < size; i++) {
+    base_ptr[i] = data[i];
+  }
+
+  //aha_memcpy((uint64_t *)base_ptr, (uint64_t *)data, size*8);
+
+}
+
+uint64_t make_config(uint32_t addr, uint32_t data) {
+  uint64_t long_addr = (uint64_t) addr;
+  return ((long_addr << 32) | data);
+}
+
+// Streaming CGRA configuration write (SWRITE).
+void write_cgra_configuration_streaming(uint32_t * addrs,
+  uint32_t * datas,
+  int size) {
+  // Load config into GLB memory.
+  uint64_t config[size];
+  int i;
+  for (i = 0; i < size; i++) {
+    config[i] = make_config(addrs[i], datas[i]);
+  }
+  // printf("\n** Stream Calculation Finished **\n");
+
+  write_glb_memory_bitstream(0x0, config, size);
+
+  // printf("\n** Configure Tile 0 for write stream **\n");
+  // Configure GLB Tile 0 for write stream.
+
+  bitstream_glb_config();
+
+  cgra_int_code = GLC_PAR_CFG_G2F_ISR_R;
+
+  //printf ("\n** Enable PC interrupt for GLB Tile 0 **\n");
+  // Enable PC interrupt for GLB Tile 0.
+  NVIC_ClearPendingIRQ(CGRA_IRQn);
+  NVIC_EnableIRQ(CGRA_IRQn);
+
+  glc_reg_write(GLC_GLOBAL_IER_R, 7);
+  glc_reg_write(GLC_PAR_CFG_G2F_IER_R, 0xffff);
+  glc_reg_write(GLC_STRM_F2G_IER_R, 0xffff);
+  glc_reg_write(GLC_STRM_G2F_IER_R, 0xffff);
+
+  // printf("\n** Start PC **\n");
+  glc_reg_write(GLC_GLB_FLUSH_CROSSBAR_R, 0);
+  glc_reg_write(GLC_CGRA_STALL_R, 0xFFFF);
+  glc_reg_write(GLC_PC_START_PULSE_R, 1);
+
+  wait_for_interrupt();
+}
+
+void wait_for_interrupt() {
+  // Wait for interrupt (spin loop on cgra_int_occured).
+  while (!cgra_int_occured) {
+     //printf("wfi WAIT %d %d %d\n", glc_reg_read(GLC_GLOBAL_ISR_R), glc_reg_read(GLC_STRM_F2G_ISR_R), glc_reg_read(GLC_STRM_G2F_ISR_R));
+  }
+  ////printf("counter %d\n", counter);
+  if(GLC_STRM_F2G_ISR_R== cgra_int_code){
+  while (glc_reg_read(cgra_int_code) != output_mask){
+  }
+  glc_reg_write(cgra_int_code, 0xffff);
+  }
+  return;
+}
+
+/* -------------------------------------------------------------------- */
+/*   BEGIN Driver Helpers                                               */
+/*   !! DON'T TOUCH !!                                                  */
+/*                                                                      */
+/*   * Interrupt ISRs                                                   */
+/*   * Interrupt Handlers                                               */
+/* -------------------------------------------------------------------- */
+// Capture all interrupts with unregistered handlers.
+void HardFault_Handler_c(unsigned int * hardfault_args, unsigned lr_value) {
+  puts("ERROR : Unexpected HardFault interrupt occurred.\n");
+  UartEndSimulation();
+  while (1);
+}
+
+void HardFault_Handler(void) __attribute__((naked));
+void HardFault_Handler(void) {
+  __asm("  movs   r0,#4\n"
+    "  mov    r1,lr\n"
+    "  tst    r0,r1\n"
+    "  beq    stacking_used_MSP\n"
+    "  mrs    r0,psp\n" /*  first parameter - stacking was using PSP */
+    "  ldr    r1,=HardFault_Handler_c  \n"
+    "  bx     r1\n"
+    "stacking_used_MSP:\n"
+    "  mrs    r0,msp\n" /*  first parameter - stacking was using PSP */
+    "  ldr    r1,=HardFault_Handler_c  \n"
+    "  bx     r1\n"
+    ".pool\n");
+}
+
+void CGRA_Handler(void) {
+  NVIC_DisableIRQ(CGRA_IRQn);
+  cgra_int_occured = 1;
+
+  //int interrupt = glc_reg_read(cgra_int_code); 
+  if(GLC_PAR_CFG_G2F_ISR_R == cgra_int_code){
+    glc_reg_write(cgra_int_code, 0xffff);
+  }
+}
+/* -------------------------------------------------------------------- */
+/*   END Driver Helpers                                                 */
+/* -------------------------------------------------------------------- */

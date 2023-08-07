@@ -1,0 +1,136 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "diag/trace.h"
+
+#include "amberm3vx_hal.h"
+#include "pointwise_input_script.h"
+#include "pointwise_script.h"
+#include "glb.h"
+#include "glc.h"
+
+HAL_PtfmCtrl_t PtfmCtl;
+
+int
+
+main(int argc, char* argv[])
+{
+  HAL_UNUSED(argc);
+  HAL_UNUSED(argv);
+
+  // Send a greeting to the trace device
+  trace_printf("Hi Yuchen!\r\n");
+
+
+#define AHASOC_PCTRL_SYS_Pos                  0
+#define AHASOC_PCTRL_CPU_Pos                  1
+#define AHASOC_PCTRL_DAP_Pos                  2
+#define AHASOC_PCTRL_DMA0_Pos                 3
+#define AHASOC_PCTRL_DMA1_Pos                 4
+#define AHASOC_PCTRL_SRAM_Pos                 5
+#define AHASOC_PCTRL_TLX_FWD_Pos              6
+#define AHASOC_PCTRL_TLX_REV_Pos              7
+#define AHASOC_PCTRL_CGRA_Pos                 8
+#define AHASOC_PCTRL_NIC_Pos                  9
+#define AHASOC_PCTRL_TIMER0_Pos               10
+#define AHASOC_PCTRL_TIMER1_Pos               11
+#define AHASOC_PCTRL_UART0_Pos                12
+#define AHASOC_PCTRL_UART1_Pos                13
+#define AHASOC_PCTRL_WDOG_Pos                 14
+#define AHASOC_ROM_BASE          (0x00000000UL)  /*!< (ROM     ) Base Address */
+#define AHASOC_SRAM_BASE         (0x20000000UL)  /*!< (SRAM      ) Base Address */
+#define AHASOC_SRAM_BANK0_BASE   (0x20000000UL)  /*!< (SRAM      ) Base Address */
+#define AHASOC_SRAM_BANK1_BASE   (0x20008000UL)  /*!< (SRAM      ) Base Address */
+#define AHASOC_SRAM_BANK2_BASE   (0x20010000UL)  /*!< (SRAM      ) Base Address */
+#define AHASOC_SRAM_BANK3_BASE   (0x20018000UL)  /*!< (SRAM      ) Base Address */
+#define AHASOC_SRAM_END_ADDR     (0x2001FFFFUL)  /*!< (SRAM      ) Base Address */
+#define AHASOC_PERIPH_BASE       (0x40000000UL)  /*!< (Peripheral) Base Address */
+#define AHASOC_TLX_BASE          (0x60000000UL)  /*!< (TLX       ) Base Address */
+#define AHASOC_CGRA_DATA_BASE    (0x20400000UL)  /*!< (CGRA DATA ) Base Address */
+#define AHASOC_CGRA_REG_BASE     (0x40010000UL)  /*!< (CGRA REG  ) Base Address */
+#define AHASOC_TLXCTRL_BASE      (0x40014000UL)  /*!< (TLX REG  ) Base Address */
+
+
+  int status = HAL_PtfmCtrl_Initialize( & PtfmCtl);
+  trace_printf("status1 %d\n", status);
+
+
+  u32 cgra_mask = (1 << AHASOC_PCTRL_CGRA_Pos);
+  u32 sys_mask = (1 << AHASOC_PCTRL_SYS_Pos);
+
+
+
+  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, cgra_mask, 0); // 2^1 = 2 60/2 = 30
+  trace_printf("status2 %d\n", status);
+  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, sys_mask, 3); // 2^2 = 4 60/4 = 15
+  trace_printf("status3 %d\n", status);
+  status = HAL_PtfmCtrl_DisableCG( & PtfmCtl, cgra_mask);
+  trace_printf("status4 %d\n", status);
+  status = HAL_PtfmCtrl_ClearReset( & PtfmCtl, cgra_mask);
+  trace_printf("status5 %d\n", status);
+
+  trace_printf("status %d\n", status);
+
+  trace_printf("\nTEST SOC SRAMS\n");
+  uint16_t* read_base = AHASOC_SRAM_BASE;
+  read_base[0] = 0xfefe;
+  read_base[1] = 0xbeef;
+  trace_printf("test1: %lx\n", read_base[0]);
+  trace_printf("test2: %lx\n", read_base[1]);
+
+  for(int i = 0; i < 10; i++){
+	  read_base[i] = i;
+  }
+
+  for(int i = 0; i < 10; i++){
+	  trace_printf("test i %d: %lx\n", i, read_base[i]);
+  }
+
+  trace_printf("\nTEST GLB\n");
+  read_base = AHASOC_CGRA_DATA_BASE;
+  read_base[0] = 0xfefe;
+  read_base[1] = 0xbeef;
+  trace_printf("glb test1: %lx\n", read_base[0]);
+  trace_printf("glb test2: %lx\n", read_base[1]);
+
+  trace_printf("\nTEST GLB Fronts\n");
+  for (int j = 0; j < 32; j++ ){
+	  trace_printf("bank %d\n", j);
+	  read_base = AHASOC_CGRA_DATA_BASE + 0x20000*j;
+	  for(int i = 0; i < 65536; i++){
+		  read_base[i] = i%60000;
+	  }
+
+	  for(int i = 0; i < 65536; i++){
+		  int k = read_base[i];
+		  if (k!=i%60000){
+		     trace_printf("glb test i %d i expect %d: %d\n", i, i%60000, read_base[i]);
+		     break;
+		  }
+		  read_base[i] = 0xffff;
+	  }
+  }
+
+
+
+  CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+
+  // 2. Reset cycle counter
+  DWT->CYCCNT = 0;
+
+  // 3. Start cycle counter
+  DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+
+  // 4. Perform timed task here
+  trace_printf("print\n");
+
+  // 5. Read cycle counter
+  uint32_t cycles = DWT->CYCCNT;
+
+  // 6. Disable cycle counter
+  DWT->CTRL &= ~CoreDebug_DEMCR_TRCENA_Msk;
+
+
+  trace_printf("cycles:%d\n", cycles);
+
+  return 0;
+}
