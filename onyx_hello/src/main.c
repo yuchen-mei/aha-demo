@@ -4,8 +4,8 @@
 
 #include "amberm3vx_hal.h"
 #include "pointwise_gops_input_script.h"
-#include "pointwise_gops_unroll_reg_write.h"
-#include "pointwise_gops_unroll_script.h"
+#include "pointwise_gops2_unroll_reg_write.h"
+#include "pointwise_gops2_unroll_script.h"
 #include "glb.h"
 #include "glc.h"
 #include "memory.h"
@@ -146,10 +146,10 @@ main(int argc, char* argv[])
   trace_printf("\nWAIT TO FINISH\n");
 
 
-  HAL_Cgra_Tile_WriteReg(0x030A0301, 0x00B00000);
-  trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x030A0301));
-  HAL_Cgra_Tile_WriteReg(0x020A0301, 0x00000008);
+  HAL_Cgra_Tile_WriteReg(0x020A0301, 0x02C00000);
   trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x020A0301));
+  HAL_Cgra_Tile_WriteReg(0x010A0301, 0x20000000);
+  trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x010A0301));
 
   for (int config = 0; config < app_size; config++){
 	  uint32_t read_data = HAL_Cgra_Tile_ReadReg(app_addrs_script[config]);
@@ -165,10 +165,10 @@ main(int argc, char* argv[])
 		  break;
 	  }
   }
-  HAL_Cgra_Tile_WriteReg(0x030A0301, 0x00B00000);
-  trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x030A0301));
-  HAL_Cgra_Tile_WriteReg(0x020A0301, 0x00000008);
+  HAL_Cgra_Tile_WriteReg(0x020A0301, 0x02C00000);
   trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x020A0301));
+  HAL_Cgra_Tile_WriteReg(0x010A0301, 0x20000000);
+  trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x010A0301));
 
 
 
@@ -198,7 +198,7 @@ main(int argc, char* argv[])
 
   trace_printf("\nCONFIG GLB\n");
 
-  for(int i =0; i < 4; i++){
+  for(int i =0; i < 8; i++){
 	  app_glb_config(i*2);
   }
 
@@ -210,20 +210,18 @@ main(int argc, char* argv[])
 
   HAL_Cgra_Glc_WriteReg(GLC_CGRA_STALL_R, 0x0);
 
-
-
   HAL_Cgra_Glc_WriteReg(GLC_GLOBAL_IER_R, 1);
   HAL_Cgra_Glc_WriteReg(GLC_STRM_F2G_IER_R, 0xffff);
   HAL_Cgra_Glc_WriteReg(GLC_STRM_G2F_IER_R, 0xffff);
 
 
-  for(int loop = 0; loop < 1; loop++){
-  HAL_Cgra_Glc_WriteReg(GLC_STREAM_START_PULSE_R, (0x55 << 16) | 0x55);
+  for(int loop = 0; loop < 1000000000; loop++){
+  HAL_Cgra_Glc_WriteReg(GLC_STREAM_START_PULSE_R, (0xAAAA << 16) | 0x5555);
 
 
-  while(HAL_Cgra_Glc_ReadReg(GLC_STRM_G2F_ISR_R) != 0x55){
-      //cnt++;
-  }
+//  while(HAL_Cgra_Glc_ReadReg(GLC_STRM_F2G_ISR_R) != 0xAAAA){
+//      //cnt++;
+//  }
   }
 
   trace_printf("f2g interrupt %lx\n", HAL_Cgra_Glc_ReadReg(GLC_STRM_F2G_ISR_R));
@@ -235,8 +233,8 @@ main(int argc, char* argv[])
 
   int error = 0;
 
-  for(int j=0; j < 4; j++){
-	  read_base = AHASOC_CGRA_DATA_BASE + 0x20000 + 0x40000*j*2;
+  for(int j=0; j < 8; j++){
+	  read_base = AHASOC_CGRA_DATA_BASE + 0x60000 + 0x40000*j*2;
 	  trace_printf("bank %d \n", j);
 	  for(int i=0; i < app_output_data_size; i++){
 		  if (read_base[i] != app_output_data[i]){
@@ -244,7 +242,7 @@ main(int argc, char* argv[])
 			  error++;
 		  }
 		  read_base[i] = 0xfefe;
-		  if (error > 10){
+		  if (error > 20){
 			  break;
 		  }
 	  }

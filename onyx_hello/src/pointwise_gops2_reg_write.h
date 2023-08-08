@@ -1,0 +1,30 @@
+
+
+static void bitstream_glb_config()
+{
+HAL_Cgra_Glb_WriteReg(0xe8, 0x1);
+HAL_Cgra_Glb_WriteReg(0xec, 0x0);
+HAL_Cgra_Glb_WriteReg(0xf0, 0x19c);
+HAL_Cgra_Glb_WriteReg(0xf4, 0x14);
+HAL_Cgra_Glb_WriteReg(0x1f4, 0x28);
+}
+
+
+static void app_glb_config()
+{
+HAL_Cgra_Glb_WriteReg(0x78, 0x21);
+HAL_Cgra_Glb_WriteReg(0x7c, 0x1);
+HAL_Cgra_Glb_WriteReg(0x80, 0x0);
+HAL_Cgra_Glb_WriteReg(0x84, 0x0);
+HAL_Cgra_Glb_WriteReg(0x88, 0xffe);
+HAL_Cgra_Glb_WriteReg(0x90, 0x1);
+HAL_Cgra_Glb_WriteReg(0x8c, 0x2);
+HAL_Cgra_Glb_WriteReg(0x110, 0x21);
+HAL_Cgra_Glb_WriteReg(0x114, 0x1);
+HAL_Cgra_Glb_WriteReg(0x118, 0x1);
+HAL_Cgra_Glb_WriteReg(0x11c, 0x60000);
+HAL_Cgra_Glb_WriteReg(0x120, 0x30);
+HAL_Cgra_Glb_WriteReg(0x124, 0xffe);
+HAL_Cgra_Glb_WriteReg(0x12c, 0x1);
+HAL_Cgra_Glb_WriteReg(0x128, 0x2);
+}

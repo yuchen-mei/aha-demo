@@ -70,7 +70,7 @@ void write_cgra_configuration_streaming(uint32_t* addrs,
   }
   trace_printf("\n** Stream Calculation Finished **\n");
 
-  write_glb_memory_bitstream(0x0, config, size);
+  write_glb_memory_bitstream(0x20000, config, size);
 
 
   trace_printf("\n** Configure Tile 0 for write stream **\n");

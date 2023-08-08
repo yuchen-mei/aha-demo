@@ -3,7 +3,7 @@
 static void bitstream_glb_config()
 {
 HAL_Cgra_Glb_WriteReg(0xe8, 0x1);
-HAL_Cgra_Glb_WriteReg(0xec, 0x0);
+HAL_Cgra_Glb_WriteReg(0xec, 0x20000);
 HAL_Cgra_Glb_WriteReg(0xf0, 0x238c);
 HAL_Cgra_Glb_WriteReg(0xf4, 0x14);
 HAL_Cgra_Glb_WriteReg(0x1f4, 0x28);
