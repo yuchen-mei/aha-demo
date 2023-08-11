@@ -4,8 +4,8 @@
 
 #include "amberm3vx_hal.h"
 #include "pointwise_gops_input_script.h"
-#include "pointwise_gops2_unroll_pd_reg_write.h"
-#include "pointwise_gops2_unroll_pd_script.h"
+#include "pointwise_gops2_unroll_reg_write.h"
+#include "pointwise_gops2_unroll_script.h"
 #include "glb.h"
 #include "glc.h"
 #include "memory.h"
@@ -146,32 +146,32 @@ main(int argc, char* argv[])
   trace_printf("\nWAIT TO FINISH\n");
 
 
-  HAL_Cgra_Tile_WriteReg(0x000C0302, 0x00000001);
-  trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x000C0302));
-  HAL_Cgra_Tile_WriteReg(0x000C0303, 0x00000001);
-  trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x000C0303));
+  HAL_Cgra_Tile_WriteReg(0x020A0301, 0x02C00000);
+  trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x020A0301));
+  HAL_Cgra_Tile_WriteReg(0x010A0301, 0x20000000);
+  trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x010A0301));
 
   for (int config = 0; config < app_size; config++){
 	  uint32_t read_data = HAL_Cgra_Tile_ReadReg(app_addrs_script[config]);
 	  uint32_t addr = app_addrs_script[config];
 	  uint32_t gold = app_datas_script[config];
 
-//	  if( HAL_Cgra_Tile_ReadReg(app_addrs_script[config]) != gold){
-//		  trace_printf("config error: %d ", config);
-//		  trace_printf("address: %lx ", addr);
-//		  trace_printf("read_data %lx ", read_data);
-//		  trace_printf("gold data %lx\n", gold);
-//		  HAL_Cgra_Tile_WriteReg(addr, gold);
-//		  trace_printf("fixed? config error: %d ", config);
-//		  trace_printf("address: %lx ", addr);
-//		  trace_printf("read_data %lx ", HAL_Cgra_Tile_ReadReg(app_addrs_script[config]));
-//		  trace_printf("gold data %lx\n", gold);
-//	  }
+	  while( HAL_Cgra_Tile_ReadReg(app_addrs_script[config]) != gold){
+		  trace_printf("config error: %d ", config);
+		  trace_printf("address: %lx ", addr);
+		  trace_printf("read_data %lx ", read_data);
+		  trace_printf("gold data %lx\n", gold);
+		  HAL_Cgra_Tile_WriteReg(addr, gold);
+		  trace_printf("fixed? config error: %d ", config);
+		  trace_printf("address: %lx ", addr);
+		  trace_printf("read_data %lx ", HAL_Cgra_Tile_ReadReg(app_addrs_script[config]));
+		  trace_printf("gold data %lx\n", gold);
+	  }
   }
-  HAL_Cgra_Tile_WriteReg(0x000C0302, 0x00000001);
-  trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x000C0302));
-  HAL_Cgra_Tile_WriteReg(0x000C0303, 0x00000001);
-  trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x000C0303));
+  HAL_Cgra_Tile_WriteReg(0x020A0301, 0x02C00000);
+  trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x020A0301));
+  HAL_Cgra_Tile_WriteReg(0x010A0301, 0x20000000);
+  trace_printf("read config1: %lx\n", HAL_Cgra_Tile_ReadReg(0x010A0301));
 
 
   status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, cgra_mask, 0); // 2^1 = 2 60/2 = 30
@@ -218,7 +218,7 @@ main(int argc, char* argv[])
   HAL_Cgra_Glc_WriteReg(GLC_STRM_G2F_IER_R, 0xffff);
 
 
-  for(int loop = 0; loop < 1; loop++){
+  for(int loop = 0; loop < 100000000; loop++){
   HAL_Cgra_Glc_WriteReg(GLC_STREAM_START_PULSE_R, (0xAAAA << 16) | 0x5555);
 
 

@@ -198,13 +198,13 @@ main(int argc, char* argv[])
 
   trace_printf("\nCONFIG GLB\n");
 
-  for(int i =0; i < 4; i++){
+  for(int i =0; i < 8; i++){
 	  app_glb_config(i*2);
   }
 
   trace_printf("\nAPP Prep\n");
 
-  HAL_Cgra_Glc_WriteReg(GLC_GLB_FLUSH_CROSSBAR_R, 0);
+  HAL_Cgra_Glc_WriteReg(GLC_GLB_FLUSH_CROSSBAR_R, 8 << 16);
   trace_printf("read/write glb test reg: %lx\n", HAL_Cgra_Glc_ReadReg(GLC_GLB_FLUSH_CROSSBAR_R));
 
 
@@ -218,10 +218,10 @@ main(int argc, char* argv[])
 
 
   for(int loop = 0; loop < 1; loop++){
-  HAL_Cgra_Glc_WriteReg(GLC_STREAM_START_PULSE_R, (0x55 << 16) | 0x55);
+  HAL_Cgra_Glc_WriteReg(GLC_STREAM_START_PULSE_R, (0x0100 << 16) | 0x0100);
 
 
-  while(HAL_Cgra_Glc_ReadReg(GLC_STRM_G2F_ISR_R) != 0x55){
+  while(HAL_Cgra_Glc_ReadReg(GLC_STRM_F2G_ISR_R) != 0x0100){
       //cnt++;
   }
   }
@@ -235,7 +235,7 @@ main(int argc, char* argv[])
 
   int error = 0;
 
-  for(int j=0; j < 4; j++){
+  for(int j=0; j < 8; j++){
 	  read_base = AHASOC_CGRA_DATA_BASE + 0x20000 + 0x40000*j*2;
 	  trace_printf("bank %d \n", j);
 	  for(int i=0; i < app_output_data_size; i++){
@@ -247,8 +247,9 @@ main(int argc, char* argv[])
 		  if (error > 10){
 			  break;
 		  }
-	  }
 
+	  }
+	  error = 0;
   }
   trace_printf("check gold data\n");
 
