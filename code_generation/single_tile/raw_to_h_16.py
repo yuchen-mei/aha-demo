@@ -65,7 +65,7 @@ def convert_image(input_data, output_data, data_file_str):
     for idx, input in enumerate(input_data):
         input_str = input.replace("hw_", "")
         input_str = input_str.replace(".raw", "")
-        f.write(f"uint16_t app_{input_str}_data[] = {{ \n")
+        f.write(f"const uint16_t app_{input_str}_data[] = {{ \n")
         f.write(raw_input_data_list[idx])
         f.write("\n};\n")
         f.write(f"const unsigned int app_{input_str}_data_size =  " + str(raw_input_data_size_list[idx]) +  ";\n")
@@ -73,7 +73,7 @@ def convert_image(input_data, output_data, data_file_str):
     for idx, output in enumerate(output_data):
         output_str = output.replace("hw_", "")
         output_str = output_str.replace(".raw", "")
-        f.write(f"uint16_t app_{output_str}_data[] = {{ \n")
+        f.write(f"const uint16_t app_{output_str}_data[] = {{ \n")
         f.write(raw_output_data_list[idx])
         f.write("\n};\n")
         f.write(f"const unsigned int app_{output_str}_data_size =  " + str(raw_output_data_size_list[idx]) +  ";\n")
