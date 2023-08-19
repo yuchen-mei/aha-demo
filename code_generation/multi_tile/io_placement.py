@@ -53,19 +53,17 @@ def unrolling(inputs, outputs, input_place_list, output_place_list, extent_dict,
         checkpoint = checkpoint + len(input_place_list[idx])
     f.write("}\n\n")
 
-    f_str = f'''
-    static int stream_pulse(){{
-    int stream_pulse_val = 0;
-    for (int i = 0; i < {checkpoint}; i++) {{
-      stream_pulse_val = (stream_pulse_val << 1) | 1;
-    }}
-    stream_pulse_val = stream_pulse_val | (stream_pulse_val << 16);
-    return stream_pulse_val;
-    }}
-    '''
-    f.write(dedent(f_str))
+    # stream val calculations
+    stream_pulse_g2f = 0
+    stream_pulse_f2g = 0
 
-    f.write("\n")
+    for io_in in input_place_list:
+        stream_pulse_g2f |= (1 << io_in[0])
+    for io_out in output_place_list:
+        stream_pulse_f2g |= (1 << io_out[0])
+
+    f.write(f"int stream_pulse_g2f = {hex(stream_pulse_g2f)};\n")
+    f.write(f"int stream_pulse_f2g = {hex(stream_pulse_f2g)};\n\n")
 
     f.write("static void update_glb_pointer_start_addr(int k){")
     for idx, input_name in enumerate(inputs):

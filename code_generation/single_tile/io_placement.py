@@ -31,17 +31,16 @@ def unrolling(inputs, outputs, input_order, output_order, app_name):
     f.write("}\n\n")
 
     # stream val calculations
-    stream_pulse_g2f = 0;
-    stream_pulse_f2g = 0;
+    stream_pulse_g2f = 0
+    stream_pulse_f2g = 0
+
     for io_in in input_place_list:
         stream_pulse_g2f |= (1 << io_in[0])
     for io_out in output_place_list:
         stream_pulse_f2g |= (1 << io_out[0])
 
     f.write(f"int stream_pulse_g2f = {hex(stream_pulse_g2f)};\n")
-    f.write(f"int stream_pulse_f2g = {hex(stream_pulse_f2g)};\n")
-
-    f.write("\n\n")
+    f.write(f"int stream_pulse_f2g = {hex(stream_pulse_f2g)};\n\n")
 
     for idx, output_name in enumerate(outputs):
         output_name_str = output_name.replace("hw_", "")
