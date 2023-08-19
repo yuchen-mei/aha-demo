@@ -19,7 +19,7 @@ def convert_bs(bs_file_name, new_name):
     f.write("const int app_size = " + str(len(bs_lines)) + ";\n\n")
 
     # addr array
-    f.write("uint32_t app_addrs_script[] = {\n")
+    f.write("const uint32_t app_addrs_script[] = {\n")
     for line in bs_lines:
         strings = line.split()
         f.write("  0x" + strings[0] + ",\n")
@@ -27,7 +27,7 @@ def convert_bs(bs_file_name, new_name):
 
 
     # data array
-    f.write("uint32_t app_datas_script[] = {\n")
+    f.write("const uint32_t app_datas_script[] = {\n")
     for line in bs_lines:
         strings = line.split()
         f.write("  0x" + strings[1] + ",\n")
