@@ -29,6 +29,7 @@ static int check_gold_data()
 int err = 0;
 for (int b = 0; b < output_banks; b++){
     int bank = output_bank_array[b];
+    trace_printf("bank %d\n", b);
     uint16_t * read_base = AHASOC_CGRA_DATA_BASE + 0x20000 + bank*0x40000;
     for (int i = 0; i < app_output_data_size/output_banks; i++) {
         if ((uint16_t)(read_base[i]) != (uint16_t) app_output_data[i*output_banks+b]) {
