@@ -10,15 +10,8 @@ for (int i = 0; i < input_stencil_unroll; i++) {
 }
 }
 
-static int stream_pulse()
-{
-int stream_pulse_val = 0;
-for (int i = 0; i < 4; i++) {
-  stream_pulse_val = (stream_pulse_val << 1) | 1;
-}
-stream_pulse_val = stream_pulse_val | (stream_pulse_val << 16);
-return stream_pulse_val;
-}
+int stream_pulse_g2f = 0x1;
+int stream_pulse_f2g = 0x1;
 
 int output_banks = 12;
 int output_bank_array[12] = {
