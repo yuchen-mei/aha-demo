@@ -55,11 +55,11 @@ def bin_to_raw(app, output_file):
 
     input_place = place_to_output(app)
 
-    # print(input_place)
+    print(input_place)
 
     input_data = []
 
-    shift = 2
+    shift = 0
     # read all bin files
     sorted_inputs = sorted(input_place)
     for i in sorted_inputs:
@@ -67,7 +67,6 @@ def bin_to_raw(app, output_file):
             input_data.append(f.read())
 
     raw = []
-
 
     for j in range(int(len(input_data[0])/2)):
         for i in range(len(input_place)):

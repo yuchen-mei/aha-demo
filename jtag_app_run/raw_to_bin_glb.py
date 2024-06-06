@@ -55,7 +55,7 @@ def raw_to_bin(app, input_file):
             os.mkdir(input_path)
         if not os.path.isdir(output_path):
             os.mkdir(output_path)
-        shift = 2
+        shift = 0
         bin_file_name = input_path + "/image_" + str(input_place[i] + shift) + ".bin"
         bin_file = open(bin_file_name, "wb")
         # write to file

@@ -47,8 +47,8 @@ def full_image(app_json):
 
     wait = input("Accelerate Application")
 
-    subprocess.run(["./Run.sh"], shell=True, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
-    #subprocess.run(["./Run.sh"], shell=True, check=True)
+    # subprocess.run(["./Run.sh"], shell=True, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+    subprocess.run(["./Run.sh"], shell=True, check=True)
 
     # print("time to run image")
     # print(time.time() - start)
@@ -65,7 +65,7 @@ def full_image(app_json):
             # Convert output binaries into output raw file
             bin_to_raw_glb.bin_to_raw(app, tile_out)
 
-            # diff chip output raw with gold_ltu raw
+            # # diff chip output raw with gold_ltu raw
             # cmd = "diff chip/" + tile_out + " " + "gold_ltu/" + tile_out
             # try:   
             #     diff = subprocess.run([cmd], shell=True, check=True)   

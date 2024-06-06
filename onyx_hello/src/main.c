@@ -3,10 +3,10 @@
 #include "diag/trace.h"
 
 #include "amberm3vx_hal.h"
-#include "camera_pipeline_2x2_input_script.h"
+//#include "camera_pipeline_2x2_input_script.h"
 #include "camera_pipeline_2x2_script.h"
 #include "camera_pipeline_2x2_reg_write.h"
-#include "camera_pipeline_2x2_unrolling.h"
+//#include "camera_pipeline_2x2_unrolling.h"
 #include "glb.h"
 #include "glc.h"
 #include "memory.h"
@@ -70,20 +70,7 @@ void write_cgra_configuration_streaming(uint64_t* addrs,
 //  }
   trace_printf("\n** Stream Calculation Finished **\n");
 
-  write_glb_memory_bitstream(0x00000, addrs, size);
-
-
-  uint32_t* read_base = AHASOC_CGRA_DATA_BASE + 0x00000;
-  for(int i= 0; i < size; i++){
-	  uint32_t data = addrs[i] & 0xffffffff;
-	  uint32_t addr = addrs[i] >> 32;
-	  if(data != read_base[2*i]){
-		  trace_printf("index %d, datas %lx read_base %lx\n", i, data, read_base[2*i]);
-	  }
-	  if(addr != read_base[2*i+1]){
-		  trace_printf("index %d, addrs %lx read_base %lx\n", i, addr, read_base[2*i+1]);
-	  }
-  }
+  write_glb_memory_bitstream(0x20000, addrs, size);
 
   trace_printf("\n** Configure Tile 0 for write stream **\n");
   // Configure GLB Tile 0 for write stream.
@@ -107,41 +94,39 @@ main(int argc, char* argv[])
   HAL_UNUSED(argc);
   HAL_UNUSED(argv);
 
-  // Send a greeting to the trace device
-  trace_printf("Hi Yuchen!\r\n");
-
-
-
-
   int status = HAL_PtfmCtrl_Initialize( & PtfmCtl);
   trace_printf("status1 %d\n", status);
-
-
   u32 cgra_mask = (1 << AHASOC_PCTRL_CGRA_Pos);
   u32 sys_mask = (1 << AHASOC_PCTRL_SYS_Pos);
-
-
-
-  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, cgra_mask, 0); // 2^1 = 2 60/2 = 30
-  trace_printf("status2 %d\n", status);
+  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, cgra_mask, 3); // 2^1 = 2 60/2 = 30
   status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, sys_mask, 3); // 2^2 = 4 60/4 = 15
-  trace_printf("status3 %d\n", status);
   status = HAL_PtfmCtrl_DisableCG( & PtfmCtl, cgra_mask);
-  trace_printf("status4 %d\n", status);
   status = HAL_PtfmCtrl_ClearReset( & PtfmCtl, cgra_mask);
-  trace_printf("status5 %d\n", status);
 
-  trace_printf("status %d\n", status);
+
+  uint8_t* read_base = AHASOC_CGRA_DATA_BASE;
+  uint8_t* check = read_base;
+
+  check = read_base + 0x40000*0;
+  trace_printf("address %lx\n", check);
+  trace_printf("outputs %lx\n", check[0]);
+  trace_printf("outputs %lx\n", check[1]);
+  check = read_base + 0x40000*1;
+  trace_printf("address %lx\n", check);
+  trace_printf("outputs %lx\n", check[0]);
+  trace_printf("outputs %lx\n", check[1]);
+  check = read_base + 0x40000*2;
+  trace_printf("outputs %lx\n", check[0]);
+  check = read_base + 0x40000*3;
+  trace_printf("outputs %lx\n", check[0]);
+
 
 
   trace_printf("\nCONFIG camera pipeline\n");
-
-
   write_cgra_configuration_streaming(app_addrs_script, app_size);
-
   trace_printf("\nWAIT TO FINISH\n");
 
-
+  int config_errors = 0;
 
   for (int config = 0; config < app_size; config++){
 	  uint32_t addr = app_addrs_script[config] >> 32;
@@ -154,54 +139,55 @@ main(int argc, char* argv[])
 		  trace_printf("address: %lx ", addr);
 		  trace_printf("read_data %lx ", read_data);
 		  trace_printf("gold data %lx\n", gold);
+		  config_errors++;
 	  }
   }
 
 
 
-  trace_printf("\nMOVE DATA TO GLB\n");
-  uint16_t* read_base = AHASOC_CGRA_DATA_BASE;
-  uint16_t* check_output_base = read_base + 0x20000;
 
-  trace_printf("outputs %lx\n", check_output_base[0]);
+  check = read_base + 0x40000*0;
+  trace_printf("outputs %lx\n", check[0]);
+  check = read_base + 0x40000*1;
+  trace_printf("outputs %lx\n", check[0]);
+  check = read_base + 0x40000*2;
+  trace_printf("outputs %lx\n", check[0]);
+  check = read_base + 0x40000*3;
+  trace_printf("outputs %lx\n", check[0]);
 
-  move_input_data();
+//  move_input_data();
 
 
   read_base = AHASOC_CGRA_DATA_BASE + 0x00000;
 
-  trace_printf("bank0\n");
-  for(int i=0; i < app_input_stencil_data_size/4; i++){
-	  if (read_base[i] != app_input_stencil_data[4*i]){
-		  trace_printf("input pixel mismatch %d, read_data %lx gold data %lx\n", i, read_base[i], app_input_stencil_data[4*i]);
-	  }
-  }
-
-  trace_printf("bank1\n");
-  read_base = AHASOC_CGRA_DATA_BASE + 0x40000;
-  for(int i=0; i < app_input_stencil_data_size/4; i++){
-	  if (read_base[i] != app_input_stencil_data[4*i+1]){
-		  trace_printf("input pixel mismatch %d, read_data %lx gold data %lx\n", i, read_base[i], app_input_stencil_data[4*i+1]);
-	  }
-  }
-  trace_printf("bank2\n");
-  read_base = AHASOC_CGRA_DATA_BASE + 0x80000;
-  for(int i=0; i < app_input_stencil_data_size/4; i++){
-	  if (read_base[i] != app_input_stencil_data[4*i+2]){
-		  trace_printf("input pixel mismatch %d, read_data %lx gold data %lx\n", i, read_base[i], app_input_stencil_data[4*i+2]);
-	  }
-  }
-  trace_printf("bank3\n");
-  read_base = AHASOC_CGRA_DATA_BASE + 0xC0000;
-  for(int i=0; i < app_input_stencil_data_size/4; i++){
-	  if (read_base[i] != app_input_stencil_data[4*i+3]){
-		  trace_printf("input pixel mismatch %d, read_data %lx gold data %lx\n", i, read_base[i], app_input_stencil_data[4*i+3]);
-	  }
-  }
-
-
-  status = HAL_PtfmCtrl_SelectClock( & PtfmCtl, cgra_mask, 0); // 2^1 = 2 60/2 = 30
-
+//  trace_printf("bank0\n");
+//  for(int i=0; i < app_input_stencil_data_size/4; i++){
+//	  if (read_base[i] != app_input_stencil_data[4*i]){
+//		  trace_printf("input pixel mismatch %d, read_data %lx gold data %lx\n", i, read_base[i], app_input_stencil_data[4*i]);
+//	  }
+//  }
+//
+//  trace_printf("bank1\n");
+//  read_base = AHASOC_CGRA_DATA_BASE + 0x40000;
+//  for(int i=0; i < app_input_stencil_data_size/4; i++){
+//	  if (read_base[i] != app_input_stencil_data[4*i+1]){
+//		  trace_printf("input pixel mismatch %d, read_data %lx gold data %lx\n", i, read_base[i], app_input_stencil_data[4*i+1]);
+//	  }
+//  }
+//  trace_printf("bank2\n");
+//  read_base = AHASOC_CGRA_DATA_BASE + 0x80000;
+//  for(int i=0; i < app_input_stencil_data_size/4; i++){
+//	  if (read_base[i] != app_input_stencil_data[4*i+2]){
+//		  trace_printf("input pixel mismatch %d, read_data %lx gold data %lx\n", i, read_base[i], app_input_stencil_data[4*i+2]);
+//	  }
+//  }
+//  trace_printf("bank3\n");
+//  read_base = AHASOC_CGRA_DATA_BASE + 0xC0000;
+//  for(int i=0; i < app_input_stencil_data_size/4; i++){
+//	  if (read_base[i] != app_input_stencil_data[4*i+3]){
+//		  trace_printf("input pixel mismatch %d, read_data %lx gold data %lx\n", i, read_base[i], app_input_stencil_data[4*i+3]);
+//	  }
+//  }
 
   trace_printf("\nCONFIG GLB\n");
 
@@ -213,7 +199,7 @@ main(int argc, char* argv[])
   HAL_Cgra_Glc_WriteReg(GLC_GLB_FLUSH_CROSSBAR_R, 0);
   HAL_Cgra_Glc_WriteReg(GLC_CGRA_STALL_R, 0x0);
 
-  for (int i=0; i < 10000; i++){
+  for (int i=0; i < 1; i++){
   HAL_Cgra_Glc_WriteReg(GLC_STREAM_START_PULSE_R, (0xFFF << 16) | 0xF);
 
 	  // Wait for inputs to finish sending
@@ -230,12 +216,42 @@ main(int argc, char* argv[])
 
   }
 
-  trace_printf("wait for app\n");
+
+  check = read_base + 0x20000 + 0x40000*0;
+  trace_printf("address %lx\n", check);
+  trace_printf("outputs %lx\n", check[0]);
+  trace_printf("outputs %lx\n", check[1]);
+  trace_printf("outputs %lx\n", check[2]);
+  check = read_base + 0x20000 + 0x40000*1;
+  trace_printf("outputs %lx\n", check[0]);
+  check = read_base + 0x20000 + 0x40000*2;
+  trace_printf("outputs %lx\n", check[0]);
+  check = read_base + 0x20000 + 0x40000*3;
+  trace_printf("outputs %lx\n", check[0]);
+  check = read_base + 0x20000 + 0x40000*4;
+  trace_printf("outputs %lx\n", check[0]);
+  check = read_base + 0x20000 + 0x40000*5;
+  trace_printf("outputs %lx\n", check[0]);
+  check = read_base + 0x20000 + 0x40000*6;
+  trace_printf("outputs %lx\n", check[0]);
+  check = read_base + 0x20000 + 0x40000*7;
+  trace_printf("outputs %lx\n", check[0]);
+  check = read_base + 0x20000 + 0x40000*8;
+  trace_printf("outputs %lx\n", check[0]);
+  check = read_base + 0x20000 + 0x40000*9;
+  trace_printf("outputs %lx\n", check[0]);
+  check = read_base + 0x20000 + 0x40000*10;
+  trace_printf("outputs %lx\n", check[0]);
+  check = read_base + 0x20000 + 0x40000*11;
+  trace_printf("outputs %lx\n", check[0]);
+
+
+
 
   int error = 0;
 
 
-  check_gold_data();
+  //check_gold_data();
 
   return 0;
 }

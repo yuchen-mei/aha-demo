@@ -9,7 +9,7 @@
 # tclsh GenGDBScript.tcl
 
 # Launch GDB with Generated Script
-arm-none-eabi-gdb < app/new_script.gdb &
+/Users/kalhankoul/Library/xPacks/\@xpack-dev-tools/arm-none-eabi-gcc/13.2.1-1.1.1/.content/bin/arm-none-eabi-gdb < app/new_script.gdb &
 P2=$!
 wait $P2
 # kill -9 $P1
