@@ -1,0 +1,28 @@
+{
+    "glb_inputs": [],
+    "inputs": {
+        "bias_host_stencil": [
+            16
+        ],
+        "input_host_stencil": [
+            0,
+            2,
+            4,
+            6
+        ],
+        "kernel_host_stencil": [
+            8,
+            10,
+            12,
+            14
+        ]
+    },
+    "outputs": {
+        "hw_output_stencil": [
+            1,
+            3,
+            5,
+            7
+        ]
+    }
+}

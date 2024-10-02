@@ -1,0 +1,1486 @@
+{
+    "hcompute_bias_cgra_stencil": {
+        "in0_bias_glb_stencil": {
+            "0": {
+                "latency": 3,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_bias_glb_stencil": {
+        "in0_bias_host_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_hw_output_stencil": {
+        "in0_output_glb_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_hw_output_stencil_1": {
+        "in0_output_glb_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_hw_output_stencil_2": {
+        "in0_output_glb_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_hw_output_stencil_3": {
+        "in0_output_glb_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_input_cgra_stencil": {
+        "in0_input_glb_stencil": {
+            "0": {
+                "latency": 3,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_input_cgra_stencil_1": {
+        "in0_input_glb_stencil": {
+            "0": {
+                "latency": 3,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_input_cgra_stencil_2": {
+        "in0_input_glb_stencil": {
+            "0": {
+                "latency": 3,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_input_cgra_stencil_3": {
+        "in0_input_glb_stencil": {
+            "0": {
+                "latency": 3,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_input_glb_stencil": {
+        "in0_input_host_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_input_glb_stencil_1": {
+        "in0_input_host_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_input_glb_stencil_2": {
+        "in0_input_host_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_input_glb_stencil_3": {
+        "in0_input_host_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_kernel_cgra_stencil": {
+        "in0_kernel_glb_stencil": {
+            "0": {
+                "latency": 3,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_kernel_cgra_stencil_1": {
+        "in0_kernel_glb_stencil": {
+            "0": {
+                "latency": 3,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_kernel_cgra_stencil_2": {
+        "in0_kernel_glb_stencil": {
+            "0": {
+                "latency": 3,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_kernel_cgra_stencil_3": {
+        "in0_kernel_glb_stencil": {
+            "0": {
+                "latency": 3,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_kernel_glb_stencil": {
+        "in0_kernel_host_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_kernel_glb_stencil_1": {
+        "in0_kernel_host_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_kernel_glb_stencil_2": {
+        "in0_kernel_host_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_kernel_glb_stencil_3": {
+        "in0_kernel_host_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil": {
+        "in0_bias_cgra_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_1": {
+        "in0_bias_cgra_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_10": {
+        "in0_bias_cgra_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_11": {
+        "in0_bias_cgra_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_12": {
+        "in0_bias_cgra_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_13": {
+        "in0_bias_cgra_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_14": {
+        "in0_bias_cgra_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_15": {
+        "in0_bias_cgra_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_16": {
+        "in0_input_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2667_i2104",
+                    "data1"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2662_i2104",
+                    "data1"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2659_i2104",
+                    "data1"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2656_i2104",
+                    "data1"
+                ]
+            }
+        },
+        "in1_kernel_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2667_i2104",
+                    "data0"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2662_i2104",
+                    "data0"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2659_i2104",
+                    "data0"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2656_i2104",
+                    "data0"
+                ]
+            }
+        },
+        "in2_output_cgra_stencil": {
+            "0": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_add_i2668_i1940",
+                    "data0"
+                ]
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_17": {
+        "in0_input_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2695_i2104",
+                    "data1"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2690_i2104",
+                    "data1"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2687_i2104",
+                    "data1"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2684_i2104",
+                    "data1"
+                ]
+            }
+        },
+        "in1_kernel_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2695_i2104",
+                    "data0"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2690_i2104",
+                    "data0"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2687_i2104",
+                    "data0"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2684_i2104",
+                    "data0"
+                ]
+            }
+        },
+        "in2_output_cgra_stencil": {
+            "0": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_add_i2696_i1940",
+                    "data0"
+                ]
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_18": {
+        "in0_input_cgra_stencil": {
+            "2": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2723_i2104",
+                    "data1"
+                ]
+            },
+            "1": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2718_i2104",
+                    "data1"
+                ]
+            },
+            "0": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2715_i2104",
+                    "data1"
+                ]
+            },
+            "3": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2712_i2104",
+                    "data1"
+                ]
+            }
+        },
+        "in1_kernel_cgra_stencil": {
+            "2": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2723_i2104",
+                    "data0"
+                ]
+            },
+            "1": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2718_i2104",
+                    "data0"
+                ]
+            },
+            "0": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2715_i2104",
+                    "data0"
+                ]
+            },
+            "3": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2712_i2104",
+                    "data0"
+                ]
+            }
+        },
+        "in2_output_cgra_stencil": {
+            "0": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_add_i2724_i1940",
+                    "data0"
+                ]
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_19": {
+        "in0_input_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2751_i2104",
+                    "data1"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2746_i2104",
+                    "data1"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2743_i2104",
+                    "data1"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2740_i2104",
+                    "data1"
+                ]
+            }
+        },
+        "in1_kernel_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2751_i2104",
+                    "data0"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2746_i2104",
+                    "data0"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2743_i2104",
+                    "data0"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2740_i2104",
+                    "data0"
+                ]
+            }
+        },
+        "in2_output_cgra_stencil": {
+            "0": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_add_i2752_i1940",
+                    "data0"
+                ]
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_2": {
+        "in0_bias_cgra_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_20": {
+        "in0_input_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2781_i2104",
+                    "data1"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2776_i2104",
+                    "data1"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2773_i2104",
+                    "data1"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2770_i2104",
+                    "data1"
+                ]
+            }
+        },
+        "in1_kernel_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2781_i2104",
+                    "data0"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2776_i2104",
+                    "data0"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2773_i2104",
+                    "data0"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2770_i2104",
+                    "data0"
+                ]
+            }
+        },
+        "in2_output_cgra_stencil": {
+            "0": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_add_i2782_i1940",
+                    "data0"
+                ]
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_21": {
+        "in0_input_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2809_i2104",
+                    "data1"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2804_i2104",
+                    "data1"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2801_i2104",
+                    "data1"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2798_i2104",
+                    "data1"
+                ]
+            }
+        },
+        "in1_kernel_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2809_i2104",
+                    "data0"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2804_i2104",
+                    "data0"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2801_i2104",
+                    "data0"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2798_i2104",
+                    "data0"
+                ]
+            }
+        },
+        "in2_output_cgra_stencil": {
+            "0": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_add_i2810_i1940",
+                    "data0"
+                ]
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_22": {
+        "in0_input_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2837_i2104",
+                    "data1"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2832_i2104",
+                    "data1"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2829_i2104",
+                    "data1"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2826_i2104",
+                    "data1"
+                ]
+            }
+        },
+        "in1_kernel_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2837_i2104",
+                    "data0"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2832_i2104",
+                    "data0"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2829_i2104",
+                    "data0"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2826_i2104",
+                    "data0"
+                ]
+            }
+        },
+        "in2_output_cgra_stencil": {
+            "0": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_add_i2838_i1940",
+                    "data0"
+                ]
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_23": {
+        "in0_input_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2865_i2104",
+                    "data1"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2860_i2104",
+                    "data1"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2857_i2104",
+                    "data1"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2854_i2104",
+                    "data1"
+                ]
+            }
+        },
+        "in1_kernel_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2865_i2104",
+                    "data0"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2860_i2104",
+                    "data0"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2857_i2104",
+                    "data0"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2854_i2104",
+                    "data0"
+                ]
+            }
+        },
+        "in2_output_cgra_stencil": {
+            "0": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_add_i2866_i1940",
+                    "data0"
+                ]
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_24": {
+        "in0_input_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2893_i2104",
+                    "data1"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2888_i2104",
+                    "data1"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2885_i2104",
+                    "data1"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2882_i2104",
+                    "data1"
+                ]
+            }
+        },
+        "in1_kernel_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2893_i2104",
+                    "data0"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2888_i2104",
+                    "data0"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2885_i2104",
+                    "data0"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2882_i2104",
+                    "data0"
+                ]
+            }
+        },
+        "in2_output_cgra_stencil": {
+            "0": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_add_i2894_i1940",
+                    "data0"
+                ]
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_25": {
+        "in0_input_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2921_i2104",
+                    "data1"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2916_i2104",
+                    "data1"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2913_i2104",
+                    "data1"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2910_i2104",
+                    "data1"
+                ]
+            }
+        },
+        "in1_kernel_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2921_i2104",
+                    "data0"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2916_i2104",
+                    "data0"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2913_i2104",
+                    "data0"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2910_i2104",
+                    "data0"
+                ]
+            }
+        },
+        "in2_output_cgra_stencil": {
+            "0": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_add_i2922_i1940",
+                    "data0"
+                ]
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_26": {
+        "in0_input_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2949_i2104",
+                    "data1"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2944_i2104",
+                    "data1"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2941_i2104",
+                    "data1"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2938_i2104",
+                    "data1"
+                ]
+            }
+        },
+        "in1_kernel_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2949_i2104",
+                    "data0"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2944_i2104",
+                    "data0"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2941_i2104",
+                    "data0"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2938_i2104",
+                    "data0"
+                ]
+            }
+        },
+        "in2_output_cgra_stencil": {
+            "0": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_add_i2950_i1940",
+                    "data0"
+                ]
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_27": {
+        "in0_input_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2977_i2104",
+                    "data1"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2972_i2104",
+                    "data1"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2969_i2104",
+                    "data1"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2966_i2104",
+                    "data1"
+                ]
+            }
+        },
+        "in1_kernel_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i2977_i2104",
+                    "data0"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i2972_i2104",
+                    "data0"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2969_i2104",
+                    "data0"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2966_i2104",
+                    "data0"
+                ]
+            }
+        },
+        "in2_output_cgra_stencil": {
+            "0": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_add_i2978_i1940",
+                    "data0"
+                ]
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_28": {
+        "in0_input_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i3005_i2104",
+                    "data1"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i3000_i2104",
+                    "data1"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2997_i2104",
+                    "data1"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2994_i2104",
+                    "data1"
+                ]
+            }
+        },
+        "in1_kernel_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i3005_i2104",
+                    "data0"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i3000_i2104",
+                    "data0"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i2997_i2104",
+                    "data0"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i2994_i2104",
+                    "data0"
+                ]
+            }
+        },
+        "in2_output_cgra_stencil": {
+            "0": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_add_i3006_i1940",
+                    "data0"
+                ]
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_29": {
+        "in0_input_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i3033_i2104",
+                    "data1"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i3028_i2104",
+                    "data1"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i3025_i2104",
+                    "data1"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i3022_i2104",
+                    "data1"
+                ]
+            }
+        },
+        "in1_kernel_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i3033_i2104",
+                    "data0"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i3028_i2104",
+                    "data0"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i3025_i2104",
+                    "data0"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i3022_i2104",
+                    "data0"
+                ]
+            }
+        },
+        "in2_output_cgra_stencil": {
+            "0": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_add_i3034_i1940",
+                    "data0"
+                ]
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_3": {
+        "in0_bias_cgra_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_30": {
+        "in0_input_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i3063_i2104",
+                    "data1"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i3058_i2104",
+                    "data1"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i3055_i2104",
+                    "data1"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i3052_i2104",
+                    "data1"
+                ]
+            }
+        },
+        "in1_kernel_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i3063_i2104",
+                    "data0"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i3058_i2104",
+                    "data0"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i3055_i2104",
+                    "data0"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i3052_i2104",
+                    "data0"
+                ]
+            }
+        },
+        "in2_output_cgra_stencil": {
+            "0": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_add_i3064_i1940",
+                    "data0"
+                ]
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_31": {
+        "in0_input_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i3091_i2104",
+                    "data1"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i3086_i2104",
+                    "data1"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i3083_i2104",
+                    "data1"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i3080_i2104",
+                    "data1"
+                ]
+            }
+        },
+        "in1_kernel_cgra_stencil": {
+            "3": {
+                "latency": 5,
+                "pe_port": [
+                    "float_DW_fp_mul_i3091_i2104",
+                    "data0"
+                ]
+            },
+            "2": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_mul_i3086_i2104",
+                    "data0"
+                ]
+            },
+            "1": {
+                "latency": 3,
+                "pe_port": [
+                    "float_DW_fp_mul_i3083_i2104",
+                    "data0"
+                ]
+            },
+            "0": {
+                "latency": 2,
+                "pe_port": [
+                    "float_DW_fp_mul_i3080_i2104",
+                    "data0"
+                ]
+            }
+        },
+        "in2_output_cgra_stencil": {
+            "0": {
+                "latency": 4,
+                "pe_port": [
+                    "float_DW_fp_add_i3092_i1940",
+                    "data0"
+                ]
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_4": {
+        "in0_bias_cgra_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_5": {
+        "in0_bias_cgra_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_6": {
+        "in0_bias_cgra_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_7": {
+        "in0_bias_cgra_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_8": {
+        "in0_bias_cgra_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_output_cgra_stencil_9": {
+        "in0_bias_cgra_stencil": {
+            "0": {
+                "latency": 0,
+                "pe_port": ""
+            }
+        }
+    },
+    "hcompute_output_glb_stencil": {
+        "in0_output_cgra_stencil": {
+            "0": {
+                "latency": 4,
+                "pe_port": [
+                    "fp_lt_i3119i48_i1697",
+                    "data0"
+                ]
+            }
+        }
+    },
+    "hcompute_output_glb_stencil_1": {
+        "in0_output_cgra_stencil": {
+            "0": {
+                "latency": 4,
+                "pe_port": [
+                    "fp_lt_i3141i48_i1697",
+                    "data0"
+                ]
+            }
+        }
+    },
+    "hcompute_output_glb_stencil_2": {
+        "in0_output_cgra_stencil": {
+            "0": {
+                "latency": 4,
+                "pe_port": [
+                    "fp_lt_i3163i48_i1697",
+                    "data0"
+                ]
+            }
+        }
+    },
+    "hcompute_output_glb_stencil_3": {
+        "in0_output_cgra_stencil": {
+            "0": {
+                "latency": 4,
+                "pe_port": [
+                    "fp_lt_i3185i48_i1697",
+                    "data0"
+                ]
+            }
+        }
+    }
+}

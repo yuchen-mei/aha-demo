@@ -1,0 +1,502 @@
+{
+  "IOs": {
+    "inputs": [
+      {
+        "bitwidth": 16,
+        "datafile": "bias_host_stencil.raw",
+        "name": "bias_host_stencil",
+        "shape": [
+          16
+        ],
+        "io_tiles": [
+          {
+            "name": "io16in_bias_host_stencil_op_hcompute_bias_glb_stencil_read_0",
+            "addr": {
+              "cycle_starting_addr": [
+                0
+              ],
+              "cycle_stride": [
+                1,
+                16,
+                802
+              ],
+              "dimensionality": 3,
+              "extent": [
+                16,
+                50,
+                50
+              ],
+              "read_data_starting_addr": [
+                0
+              ],
+              "read_data_stride": [
+                1,
+                0,
+                0
+              ]
+            },
+            "mode": "STATIC",
+            "x_pos": 16,
+            "y_pos": 0,
+            "is_glb_input": 0
+          }
+        ]
+      },
+      {
+        "bitwidth": 16,
+        "datafile": "input_host_stencil.raw",
+        "name": "input_host_stencil",
+        "shape": [
+          4,
+          101,
+          101
+        ],
+        "io_tiles": [
+          {
+            "name": "io16in_input_host_stencil_clkwrk_0_op_hcompute_input_glb_stencil_read_0",
+            "addr": {
+              "cycle_starting_addr": [
+                1
+              ],
+              "cycle_stride": [
+                1,
+                102,
+                802
+              ],
+              "dimensionality": 3,
+              "extent": [
+                101,
+                3,
+                50
+              ],
+              "read_data_starting_addr": [
+                0
+              ],
+              "read_data_stride": [
+                1,
+                101,
+                202
+              ]
+            },
+            "mode": "STATIC",
+            "x_pos": 0,
+            "y_pos": 0,
+            "is_glb_input": 0
+          },
+          {
+            "name": "io16in_input_host_stencil_clkwrk_1_op_hcompute_input_glb_stencil_1_read_0",
+            "addr": {
+              "cycle_starting_addr": [
+                1
+              ],
+              "cycle_stride": [
+                1,
+                102,
+                802
+              ],
+              "dimensionality": 3,
+              "extent": [
+                101,
+                3,
+                50
+              ],
+              "read_data_starting_addr": [
+                0
+              ],
+              "read_data_stride": [
+                1,
+                101,
+                202
+              ]
+            },
+            "mode": "STATIC",
+            "x_pos": 2,
+            "y_pos": 0,
+            "is_glb_input": 0
+          },
+          {
+            "name": "io16in_input_host_stencil_clkwrk_2_op_hcompute_input_glb_stencil_2_read_0",
+            "addr": {
+              "cycle_starting_addr": [
+                1
+              ],
+              "cycle_stride": [
+                1,
+                102,
+                802
+              ],
+              "dimensionality": 3,
+              "extent": [
+                101,
+                3,
+                50
+              ],
+              "read_data_starting_addr": [
+                0
+              ],
+              "read_data_stride": [
+                1,
+                101,
+                202
+              ]
+            },
+            "mode": "STATIC",
+            "x_pos": 4,
+            "y_pos": 0,
+            "is_glb_input": 0
+          },
+          {
+            "name": "io16in_input_host_stencil_clkwrk_3_op_hcompute_input_glb_stencil_3_read_0",
+            "addr": {
+              "cycle_starting_addr": [
+                1
+              ],
+              "cycle_stride": [
+                1,
+                102,
+                802
+              ],
+              "dimensionality": 3,
+              "extent": [
+                101,
+                3,
+                50
+              ],
+              "read_data_starting_addr": [
+                0
+              ],
+              "read_data_stride": [
+                1,
+                101,
+                202
+              ]
+            },
+            "mode": "STATIC",
+            "x_pos": 6,
+            "y_pos": 0,
+            "is_glb_input": 0
+          }
+        ]
+      },
+      {
+        "bitwidth": 16,
+        "datafile": "kernel_host_stencil.raw",
+        "name": "kernel_host_stencil",
+        "shape": [
+          4,
+          4,
+          4,
+          3,
+          3
+        ],
+        "io_tiles": [
+          {
+            "name": "io16in_kernel_host_stencil_clkwrk_4_op_hcompute_kernel_glb_stencil_read_0",
+            "addr": {
+              "cycle_starting_addr": [
+                0
+              ],
+              "cycle_stride": [
+                1,
+                802
+              ],
+              "dimensionality": 2,
+              "extent": [
+                144,
+                50
+              ],
+              "read_data_starting_addr": [
+                0
+              ],
+              "read_data_stride": [
+                1,
+                0
+              ]
+            },
+            "mode": "STATIC",
+            "x_pos": 8,
+            "y_pos": 0,
+            "is_glb_input": 0
+          },
+          {
+            "name": "io16in_kernel_host_stencil_clkwrk_5_op_hcompute_kernel_glb_stencil_1_read_0",
+            "addr": {
+              "cycle_starting_addr": [
+                0
+              ],
+              "cycle_stride": [
+                1,
+                802
+              ],
+              "dimensionality": 2,
+              "extent": [
+                144,
+                50
+              ],
+              "read_data_starting_addr": [
+                0
+              ],
+              "read_data_stride": [
+                1,
+                0
+              ]
+            },
+            "mode": "STATIC",
+            "x_pos": 10,
+            "y_pos": 0,
+            "is_glb_input": 0
+          },
+          {
+            "name": "io16in_kernel_host_stencil_clkwrk_6_op_hcompute_kernel_glb_stencil_2_read_0",
+            "addr": {
+              "cycle_starting_addr": [
+                0
+              ],
+              "cycle_stride": [
+                1,
+                802
+              ],
+              "dimensionality": 2,
+              "extent": [
+                144,
+                50
+              ],
+              "read_data_starting_addr": [
+                0
+              ],
+              "read_data_stride": [
+                1,
+                0
+              ]
+            },
+            "mode": "STATIC",
+            "x_pos": 12,
+            "y_pos": 0,
+            "is_glb_input": 0
+          },
+          {
+            "name": "io16in_kernel_host_stencil_clkwrk_7_op_hcompute_kernel_glb_stencil_3_read_0",
+            "addr": {
+              "cycle_starting_addr": [
+                0
+              ],
+              "cycle_stride": [
+                1,
+                802
+              ],
+              "dimensionality": 2,
+              "extent": [
+                144,
+                50
+              ],
+              "read_data_starting_addr": [
+                0
+              ],
+              "read_data_stride": [
+                1,
+                0
+              ]
+            },
+            "mode": "STATIC",
+            "x_pos": 14,
+            "y_pos": 0,
+            "is_glb_input": 0
+          }
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "bitwidth": 16,
+        "datafile": "hw_output.raw",
+        "name": "hw_output_stencil",
+        "shape": [
+          4,
+          4,
+          50,
+          50
+        ],
+        "io_tiles": [
+          {
+            "name": "io16_hw_output_stencil_clkwrk_8_op_hcompute_hw_output_stencil_write_0",
+            "addr": {
+              "cycle_starting_addr": [
+                1328
+              ],
+              "cycle_stride": [
+                1,
+                50,
+                802
+              ],
+              "dimensionality": 3,
+              "extent": [
+                52,
+                4,
+                52
+              ],
+              "write_data_starting_addr": [
+                0
+              ],
+              "write_data_stride": [
+                1,
+                50,
+                200
+              ]
+            },
+            "mode": "VALID",
+            "x_pos": 1,
+            "y_pos": 0,
+            "valid_name": "hw_output_stencil_clkwrk_8_op_hcompute_hw_output_stencil"
+          },
+          {
+            "name": "io16_hw_output_stencil_clkwrk_9_op_hcompute_hw_output_stencil_1_write_0",
+            "addr": {
+              "cycle_starting_addr": [
+                1328
+              ],
+              "cycle_stride": [
+                1,
+                50,
+                802
+              ],
+              "dimensionality": 3,
+              "extent": [
+                52,
+                4,
+                52
+              ],
+              "write_data_starting_addr": [
+                0
+              ],
+              "write_data_stride": [
+                1,
+                50,
+                200
+              ]
+            },
+            "mode": "VALID",
+            "x_pos": 3,
+            "y_pos": 0,
+            "valid_name": "hw_output_stencil_clkwrk_9_op_hcompute_hw_output_stencil_1"
+          },
+          {
+            "name": "io16_hw_output_stencil_clkwrk_10_op_hcompute_hw_output_stencil_2_write_0",
+            "addr": {
+              "cycle_starting_addr": [
+                1328
+              ],
+              "cycle_stride": [
+                1,
+                50,
+                802
+              ],
+              "dimensionality": 3,
+              "extent": [
+                52,
+                4,
+                52
+              ],
+              "write_data_starting_addr": [
+                0
+              ],
+              "write_data_stride": [
+                1,
+                50,
+                200
+              ]
+            },
+            "mode": "VALID",
+            "x_pos": 5,
+            "y_pos": 0,
+            "valid_name": "hw_output_stencil_clkwrk_10_op_hcompute_hw_output_stencil_2"
+          },
+          {
+            "name": "io16_hw_output_stencil_clkwrk_11_op_hcompute_hw_output_stencil_3_write_0",
+            "addr": {
+              "cycle_starting_addr": [
+                1328
+              ],
+              "cycle_stride": [
+                1,
+                50,
+                802
+              ],
+              "dimensionality": 3,
+              "extent": [
+                52,
+                4,
+                52
+              ],
+              "write_data_starting_addr": [
+                0
+              ],
+              "write_data_stride": [
+                1,
+                50,
+                200
+              ]
+            },
+            "mode": "VALID",
+            "x_pos": 7,
+            "y_pos": 0,
+            "valid_name": "hw_output_stencil_clkwrk_11_op_hcompute_hw_output_stencil_3"
+          }
+        ]
+      }
+    ]
+  },
+  "testing": {
+    "interleaved_input": [
+      "input.pgm"
+    ],
+    "interleaved_output": [
+      "gold.pgm"
+    ],
+    "bitstream": "sequential_0_fp.bs",
+    "coreir": "design_top.json",
+    "placement": "design.place"
+  },
+  "HALIDE_GEN_ARGS": {
+    "in_img": 101,
+    "pad_o_left": 1,
+    "pad_o_right": 1,
+    "ksize": 3,
+    "stride": 2,
+    "n_ic": 4,
+    "n_oc": 16,
+    "k_ic": 4,
+    "k_oc": 16,
+    "glb_i": 4,
+    "glb_k": 4,
+    "glb_o": 4,
+    "relu6": 1
+  },
+  "GLB_BANK_CONFIG": {
+    "glb_inputs": [],
+    "inputs": {
+      "bias_host_stencil": [
+        16
+      ],
+      "input_host_stencil": [
+        0,
+        2,
+        4,
+        6
+      ],
+      "kernel_host_stencil": [
+        8,
+        10,
+        12,
+        14
+      ]
+    },
+    "outputs": {
+      "hw_output_stencil": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
+  }
+}

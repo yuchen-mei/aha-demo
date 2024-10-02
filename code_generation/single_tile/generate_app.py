@@ -3,6 +3,7 @@ import shutil
 
 import io_placement
 import raw_to_h_16
+import raw_to_h_16_unroll
 import bs_to_h
 import meta
 import os
@@ -12,7 +13,8 @@ import os
 inputs, outputs, input_order, output_order, bitstream_name = meta.meta_scrape("design_meta.json")
 
 
-raw_to_h_16.convert_image(inputs, outputs, sys.argv[1])
+# raw_to_h_16.convert_image(inputs, outputs, sys.argv[1])
+raw_to_h_16_unroll.convert_image_unroll(inputs, outputs, input_order, sys.argv[1])
 bs_to_h.convert_bs(bitstream_name, sys.argv[1])
 io_placement.unrolling(inputs, outputs, input_order, output_order, sys.argv[1])
 with open('reg_write.h', 'r') as file:

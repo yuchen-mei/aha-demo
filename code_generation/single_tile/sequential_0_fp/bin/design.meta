@@ -1,0 +1,4 @@
+placement=design.place
+bitstream=sequential_0_fp.bs
+input=input.pgm
+output=gold.pgm

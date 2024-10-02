@@ -1,0 +1,2 @@
+export app=unoptimized_conv2D_fp
+export HLS_CLOCK_FREQUENCY=250000000
